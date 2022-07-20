@@ -9,7 +9,6 @@ const {
     getUserByUsername,
     getUserById,
     getUser,
-    // getAllUsers
 } = require("../db/users");
 
 const {
@@ -76,5 +75,20 @@ router.post("/register", async (req, res, next) => {
         }
     } catch (error) {
         next(error);
+    }
+});
+
+// GET /api/users/me
+router.get("/me", async (req, res, next) => {
+    if (!req.user) {
+        res.status(401);
+        next({
+            name: "Authorization Error",
+            message: UnauthorizedError(),
+        });
+    } else {
+        const { id } = req.user;
+        const user = await getUserById(id);
+        res.send(user);
     }
 });
