@@ -6,6 +6,7 @@ import Home from "./Routes/Home/Home";
 import Products from "./Routes/Products/Products";
 import Navbar from "./Routes/Navbar/Navbar";
 import "./App.css";
+// import { images } from "../src/components";
 
 function App() {
   return (
