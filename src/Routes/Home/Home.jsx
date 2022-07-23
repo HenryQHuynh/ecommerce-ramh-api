@@ -2,13 +2,13 @@ import React from "react";
 import "./Home.css";
 import { images } from '../../constants'
 import Carousel from 'react-bootstrap/Carousel';
-
+import Image from 'react-bootstrap/Image'
 export default function Home() {
   return (
     <main className="home-container">
      <Carousel fade>
       <Carousel.Item>
-        <img
+        <Image
           className="d-block w-100"
           src={images.background}
           alt="First slide"
@@ -19,7 +19,7 @@ export default function Home() {
         </Carousel.Caption>
       </Carousel.Item>
       <Carousel.Item>
-        <img
+        <Image
           className="d-block w-100"
           src={images.backgroundtwo}
           alt="Second slide"
@@ -31,7 +31,7 @@ export default function Home() {
         </Carousel.Caption>
       </Carousel.Item>
       <Carousel.Item>
-        <img
+        <Image
           className="d-block w-100"
           src={images.newsletter}
           alt="Third slide"
