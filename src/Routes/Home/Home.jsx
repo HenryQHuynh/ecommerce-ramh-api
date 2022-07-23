@@ -1,11 +1,51 @@
 import React from "react";
 import "./Home.css";
+import { images } from '../../constants'
+import Carousel from 'react-bootstrap/Carousel';
 
 export default function Home() {
   return (
     <main className="home-container">
-      <h1 background-color="blue">Home</h1>
-      <h2>Were freakin legends</h2>
+     <Carousel fade>
+      <Carousel.Item>
+        <img
+          className="d-block w-100"
+          src={images.background}
+          alt="First slide"
+        />
+        <Carousel.Caption>
+          <h3>First slide label</h3>
+          <p>Nulla vitae elit libero, a pharetra augue mollis interdum.</p>
+        </Carousel.Caption>
+      </Carousel.Item>
+      <Carousel.Item>
+        <img
+          className="d-block w-100"
+          src={images.backgroundtwo}
+          alt="Second slide"
+        />
+
+        <Carousel.Caption>
+          <h3>Second slide label</h3>
+          <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit.</p>
+        </Carousel.Caption>
+      </Carousel.Item>
+      <Carousel.Item>
+        <img
+          className="d-block w-100"
+          src={images.newsletter}
+          alt="Third slide"
+        />
+
+        <Carousel.Caption>
+          <h3>Third slide label</h3>
+          <p>
+            Praesent commodo cursus magna, vel scelerisque nisl consectetur.
+          </p>
+        </Carousel.Caption>
+      </Carousel.Item>
+    </Carousel>
+
     </main>
   );
 }

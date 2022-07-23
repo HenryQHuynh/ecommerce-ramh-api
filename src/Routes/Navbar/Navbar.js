@@ -2,10 +2,20 @@ import { Box, Button, Flex, HStack } from "@chakra-ui/react";
 import * as React from "react";
 import { Link, Routes, Route } from "react-router-dom";
 import Register from "../Register/Register.jsx";
-
+import { useState, useEffect } from 'react'
+import Home from "../Home/Home.jsx"
 const NavItem = (props) => <Box as="a" href="#" fontSize="sm" {...props} />;
 
 export const Navbar = () => {
+  const [token, setToken] = useState('');
+
+  useEffect(() => {
+    if (localStorage.getItem('token')) {
+      setToken(localStorage.getItem('token'))
+    }
+  }, [])
+
+  console.log(token);
   return (
     <Box as="header" pb="20">
       <Box borderBottomWidth="1px" px="4" bg="bg-surface">
@@ -13,7 +23,7 @@ export const Navbar = () => {
           <HStack spacing={"2"}>
             <NavItem _hover={{ borderBottomWidth: "2px" }}>
               <Link
-                to="/home"
+                to="/Home"
                 style={{
                   color: "#AAA492",
                   padding: "15px",
@@ -73,7 +83,7 @@ export const Navbar = () => {
               </Button>
             </NavItem>
             <NavItem>
-              <Button
+            <Button
                 as="a"
                 href="/register"
                 colorScheme="blue"
@@ -87,12 +97,12 @@ export const Navbar = () => {
         </Flex>
       </Box>
       <Routes>
-        {/* <Route path="*" element={<Home  token={token} />} /> */}
+        <Route path="*" element={<Home  token={token} />} />
         {/* <Route path="products" element ={<Products />} /> */}
         {/* <Route path="events" element ={<Events />} /> */}
         {/* <Route path="profile" element={<Profile token={token} />} /> */}
         {/* <Route path="login" element ={<Login />} /> */}
-        <Route path="register" element={<Register />} />
+        <Route path="register" element={<Register setToken={setToken}/>} />
       </Routes>
     </Box>
   );
