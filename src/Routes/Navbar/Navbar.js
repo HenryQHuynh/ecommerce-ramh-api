@@ -2,6 +2,7 @@ import { Box, Button, Flex, HStack } from "@chakra-ui/react";
 import * as React from "react";
 import { Link, Routes, Route } from "react-router-dom";
 import Register from "../Register/Register.jsx";
+import Login from "../Login/Login.jsx";
 import { useState, useEffect } from "react";
 import Home from "../Home/Home.jsx";
 const NavItem = (props) => <Box as="a" href="#" fontSize="sm" {...props} />;
@@ -25,7 +26,7 @@ export const Navbar = () => {
               <Link
                 to="/Home"
                 style={{
-                  color: "#DCD7C9",
+                  color: "#EFFFFD",
                   padding: "15px",
                   justifyContent: "center",
                   fontSize: "22px",
@@ -39,7 +40,7 @@ export const Navbar = () => {
               <Link
                 to="/products"
                 style={{
-                  color: "#DCD7C9",
+                  color: "#EFFFFD",
                   padding: "15px",
                   justifyContent: "center",
                   fontSize: "22px",
@@ -53,7 +54,7 @@ export const Navbar = () => {
               <Link
                 to="/events"
                 style={{
-                  color: "#DCD7C9",
+                  color: "#EFFFFD",
                   padding: "15px",
                   justifyContent: "center",
                   fontSize: "22px",
@@ -67,7 +68,7 @@ export const Navbar = () => {
               <Link
                 to="/profile"
                 style={{
-                  color: "#DCD7C9",
+                  color: "#EFFFFD",
                   padding: "15px",
                   justifyContent: "center",
                   fontSize: "22px",
@@ -81,7 +82,7 @@ export const Navbar = () => {
               <Link
                 to="/subscribe"
                 style={{
-                  color: "#DCD7C9",
+                  color: "#EFFFFD",
                   padding: "15px",
                   justifyContent: "center",
                   fontSize: "22px",
@@ -94,10 +95,10 @@ export const Navbar = () => {
             <NavItem>
               <Button
                 as="a"
-                href="#"
+                href="/login"
                 variant="ghost"
                 size="md"
-                color="#DCD7C9"
+                color="#EFFFFD"
                 fontSize="22px"
               >
                 Log in
@@ -109,7 +110,7 @@ export const Navbar = () => {
                 href="/register"
                 colorScheme="blue"
                 size="md"
-                color="#DCD7C9"
+                color="#EFFFFD"
                 fontSize="22px"
               >
                 Sign up
@@ -124,7 +125,7 @@ export const Navbar = () => {
         {/* <Route path="events" element ={<Events />} /> */}
         {/* <Route path="profile" element={<Profile token={token} />} /> */}
         {/* <Route path="subscribe" element ={<Subscribe />} /> */}
-        {/* <Route path="login" element ={<Login />} /> */}
+        <Route path="login" element={<Login setToken={setToken} />} />
         <Route path="register" element={<Register setToken={setToken} />} />
       </Routes>
     </Box>
