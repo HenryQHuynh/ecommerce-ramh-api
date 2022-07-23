@@ -18,8 +18,8 @@ export const Navbar = () => {
 
   console.log(token);
   return (
-    <Box as="header" pb="20" height={"3em"} bg={"#2C3639"}>
-      <Box px="4" bg={"#2C3639"} h={"6em"}>
+    <Box as="header" pb="20" height={"3em"} bg={"#152D35"}>
+      <Box px="4" bg={"#152D35"} h={"6em"}>
         <Flex justify={"center"}>
           <HStack spacing={"2"} pt={"1.75em"}>
             <NavItem _hover={{ borderBottomWidth: "2px" }}>

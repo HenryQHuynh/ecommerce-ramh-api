@@ -35,10 +35,10 @@ export default function Login({ setToken }) {
   };
 
   return (
-    <Box h={"100vh"} bg={"#3F4E4F"}>
+    <Box h={"100vh"} bg={"white"}>
       <Container
         maxW="md"
-        color={"#EFFFFD"}
+        color={"#041C32"}
         py={{
           base: "12",
           md: "24",
@@ -92,7 +92,7 @@ export default function Login({ setToken }) {
               <Checkbox defaultChecked>Remember me</Checkbox>
             </HStack>
             <Stack spacing="4" onSubmit={handleSubmit}>
-              <Button type="submit" variant="solid" size="lg" bg={"#2C3639"}>
+              <Button type="submit" variant="solid" size="lg" bg={"white"}>
                 Sign in
               </Button>
               <Button
@@ -100,7 +100,7 @@ export default function Login({ setToken }) {
                 //leftIcon={<GoogleIcon boxSize="5" />}
                 iconSpacing="3"
               >
-                Sign up with Google
+                Sign in with Google
               </Button>
             </Stack>
           </Stack>
