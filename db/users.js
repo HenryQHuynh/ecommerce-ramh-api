@@ -4,12 +4,11 @@ const bcrypt = require("bcrypt"); //Extra credit attempt!
 
 // database functions
   async function createUser({ username, password }) {
-    const SALT_COUNT = 10;
-    const hashedPassword = await bcrypt.hash(password, SALT_COUNT);
-  
-    try {
+      try {
+      const SALT_COUNT = 10;
+      const hashedPassword = await bcrypt.hash(password, SALT_COUNT);
       const {
-        rows: [user],
+        rows: [user]
       } = await client.query(
         `
           INSERT INTO users(username, password)
@@ -24,7 +23,7 @@ const bcrypt = require("bcrypt"); //Extra credit attempt!
   
       return user;
     } catch (error) {
-      throw error;
+      console.error(error)
     }
   }
 

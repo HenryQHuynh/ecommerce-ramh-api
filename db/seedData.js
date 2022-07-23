@@ -2,7 +2,7 @@ const client = require("./client");
 
 const {
   createUser,
-} = require('./')
+} = require('./users')
 
 async function dropTables() {
     console.log('Hey man, Dropping All Tables...');
@@ -38,14 +38,14 @@ async function dropTables() {
           description TEXT NOT NULL
         );
         CREATE TABLE orders (
-            id SERIAL PRIMARY KEY,
-            name VARCHAR(255) UNIQUE NOT NULL,
-            description TEXT NOT NULL
+          id SERIAL PRIMARY KEY,
+          name VARCHAR(255) UNIQUE NOT NULL,
+          description TEXT NOT NULL
         );
         CREATE TABLE reviews (
-            id SERIAL PRIMARY KEY,
-            name VARCHAR(255) UNIQUE NOT NULL,
-            description TEXT NOT NULL
+          id SERIAL PRIMARY KEY,
+          name VARCHAR(255) UNIQUE NOT NULL,
+          description TEXT NOT NULL
         );
         `);
       console.log("Finished building tables!");
@@ -60,17 +60,17 @@ async function dropTables() {
     console.log("Starting to create users...")
     try {
       const usersToCreate = [
-        { username: "albert", password: "bertie99" },
-        { username: "sandra", password: "sandra123" },
-        { username: "glamgal", password: "glamgal123" },
+        { username: "Max", password: "HatesZoom" },
+        { username: "Ryan", password: "BenIsTheBest" },
+        { username: "Aandrea", password: "BootStrap4Lyfe" },
       ]
-      const users = await Promise.all(usersToCreate.map(createUser))
+      const users = await Promise.all(usersToCreate.map((createUser)))
   
       console.log("Users created:")
       console.log(users)
       console.log("Finished creating users!")
     } catch (error) {
-      console.error("Error creating users!")
+      console.log("Error creating users!")
       throw error
     }
   }
