@@ -1,4 +1,7 @@
 import React from "react";
+import { useState } from "react";
+import { registerUser } from "../../api";
+import { useNavigate } from "react-router-dom";
 import "./Register.css";
 import {
   Button,
@@ -14,7 +17,22 @@ import {
   useBreakpointValue,
 } from "@chakra-ui/react";
 
-export default function Register() {
+export default function Register({ setToken }) {
+  const [username, setUsername] = useState('');
+  const [password, setPassword] = useState('');
+  const navigate = useNavigate()
+  console.log(username)
+  console.log(password)
+    
+  const handleSubmit = async (e) => {
+    e.ppreventDefault();
+    const registerInfo = await registerUser(username, password);
+    setToken(registerInfo);
+    setUsername('')
+    setPassword('')
+    navigate('/Home')
+  }
+
   return (
     <Container
       maxW="md"
@@ -39,7 +57,7 @@ export default function Register() {
                 md: "sm",
               })}
             >
-              Log in to your account
+              Create an account 
             </Heading>
             <Text color="muted">Start making your dreams come true</Text>
           </Stack>
@@ -47,38 +65,29 @@ export default function Register() {
         <Stack spacing="6">
           <Stack spacing="5">
             <FormControl>
-              <FormLabel htmlFor="email">Email</FormLabel>
-              <Input id="email" placeholder="Enter your email" type="email" />
+              <FormLabel htmlFor="username">Create Username</FormLabel>
+              <Input id="username" placeholder="Create Username" type="username" value={username} onChange={(event) => setUsername(event.target.value)}/>
             </FormControl>
             <FormControl>
-              <FormLabel htmlFor="password">Password</FormLabel>
-              <Input id="password" placeholder="********" type="password" />
+              <FormLabel htmlFor="password">Create Password</FormLabel>
+              <Input id="password" placeholder="********" type="password" value={password} onChange={(event) => setPassword(event.target.value)} />
             </FormControl>
           </Stack>
           <HStack justify="space-between">
             <Checkbox defaultChecked>Remember me</Checkbox>
-            <Button variant="link" colorScheme="blue" size="sm">
-              Forgot password
-            </Button>
           </HStack>
-          <Stack spacing="4">
-            <Button variant="primary">Sign in</Button>
+          <Stack spacing="4" onSubmit={handleSubmit}>
+            <Button type= "submit" variant="solid" size="lg">Sign up</Button>
             <Button
               variant="secondary"
-              // leftIcon={<GoogleIcon boxSize="5" />}
+              //leftIcon={<GoogleIcon boxSize="5" />}
               iconSpacing="3"
             >
-              Sign in with Google
+              Sign up with Google
             </Button>
           </Stack>
         </Stack>
         <HStack spacing="1" justify="center">
-          <Text fontSize="sm" color="muted">
-            Don't have an account?
-          </Text>
-          <Button variant="link" colorScheme="blue" size="sm">
-            Sign up
-          </Button>
         </HStack>
       </Stack>
     </Container>
