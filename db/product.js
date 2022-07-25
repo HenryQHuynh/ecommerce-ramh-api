@@ -5,7 +5,7 @@ async function createProduct({
     title,
     description,
     price,
-    image,W
+    image,
     category_id,
 }) {
     try {
@@ -19,7 +19,7 @@ async function createProduct({
         const product = response.rows[0];
         return product
     } catch (error) {
-        throw error;
+        console.log("Error")
     }
 }
 
@@ -89,7 +89,9 @@ async function updateProduct({ id, title, description, price, quantity }) {
         }
         const product = await getProductById(id);
         return product;
-    } catch (error) { }
+    } catch (error) {
+        console.error(error);
+    }
 }
 
 const destroyProduct = async (id) => {

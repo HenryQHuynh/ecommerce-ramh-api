@@ -12,7 +12,7 @@ async function createCategories({ name }) {
 
         return response;
     } catch (error) {
-        throw error;
+        console.error(error);
     }
 }
 
