@@ -10,31 +10,31 @@ async function getAllProducts() {
         );
         return rows;
     } catch (error) {
-    console.log("Error: Problem retrieving all products...", error);
+        console.log("Error: Problem retrieving all products...", error);
     }
 }
 
 async function getProductById(id) {
     try {
-      const {
-        rows: [product],
-      } = await client.query(`
+        const {
+            rows: [product],
+        } = await client.query(`
       SELECT * FROM products
       WHERE id = $1;
       `, [id]);
-      console.log(product)
-      return product;
+        console.log(product)
+        return product;
     } catch (error) {
-      console.error("Error: Problem getting products by Id...", error);
+        console.error("Error: Problem getting products by Id...", error);
     }
-  }
+}
 
 async function getProductByName(title) {
     try {
         const {
             rows: [product],
         } = await client.query(
-        `
+            `
         SELECT * FROM products
         WHERE title = $1;
         `, [title]);
@@ -49,12 +49,12 @@ async function createProduct({ title, description, authorId, distId }) {
         const {
             rows: [product],
         } = await client.query(
-        `
+            `
         INSERT INTO products (title, description, "authorId", "distId")
         VALUES ($1, $2, $3, $4)
         RETURNING *;
         `,
-        [ title, description, authorId, distId ]
+            [title, description, authorId, distId]
         );
         return product;
     } catch (error) {
@@ -63,48 +63,77 @@ async function createProduct({ title, description, authorId, distId }) {
 }
 
 // Need to implement Admin capabilities ++ Booleans ++Admin profile?
-async function updateProduct({ id, title, description, price, quantity }) {
+// Need Max to explain to me how this updateProduct works
+// async function updateProduct({ id, title, description, price, quantity }) {
+//     try {
+//         if (title) {
+//             await client.query(`
+//             UPDATE products
+//             SET title = $1
+//             WHERE id = $2;
+//             `,
+//                 [title, id]
+//             );
+//         }
+//         if (description) {
+//             await client.query(`
+//             UPDATE products
+//             SET description = $1
+//             WHERE id = $2;
+//             `,
+//                 [description, id]
+//             );
+//         }
+//         if (price) {
+//             await client.query(`
+//             UPDATE products
+//             SET price = $1
+//             WHERE id = $2;
+//             `,
+//                 [price, id]
+//             );
+//         }
+//         if (quantity) {
+//             await client.query(`
+//             UPDATE products
+//             SET quantity = $1
+//             WHERE id = $2;
+//             `,
+//                 [quantity, id]
+//             );
+//         }
+//         const product = await getProductById(id);
+//         return product;
+//     } catch (error) {
+//         console.error(error);
+//     }
+// }
+
+async function updateProduct({ id, description, authorId, distId }) {
+    const fields = { description, authorId, distId };
+
+    const setString = Object.keys(fields)
+        .map((key, index) => `"${key}"=$${index + 1}`)
+        .join(", ");
+
+    if (setString.length === 0) {
+        return;
+    }
     try {
-        if (title) {
-            await client.query(`
+        const {
+            rows: [product],
+        } = await client.query(
+            `
             UPDATE products
-            SET title = $1
-            WHERE id = $2;
+            SET ${setString}
+            WHERE id=${id}
+            RETURNING *;
             `,
-                [title, id]
-            );
-        }
-        if (description) {
-            await client.query(`
-            UPDATE products
-            SET description = $1
-            WHERE id = $2;
-            `,
-                [description, id]
-            );
-        }
-        if (price) {
-            await client.query(`
-            UPDATE products
-            SET price = $1
-            WHERE id = $2;
-            `,
-                [price, id]
-            );
-        }
-        if (quantity) {
-            await client.query(`
-            UPDATE products
-            SET quantity = $1
-            WHERE id = $2;
-            `,
-                [quantity, id]
-            );
-        }
-        const product = await getProductById(id);
+            Object.values(fields)
+        );
         return product;
     } catch (error) {
-        console.error(error);
+        console.error("Problem updating products!", error);
     }
 }
 
