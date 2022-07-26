@@ -1,57 +1,68 @@
-const { client } = require("./client");
+const client = require("./client");
 
-// async function createProduct({
-//     user_id,
-//     title,
-//     description,
-//     price,
-//     image,
-//     category_id,
-// }) {
-//     try {
-//         const response = await client.query(`
-//         INSERT INTO products(user_id,title, descriptio, price, image,category_id)
-//         VALUES($1, $2, $3, $4, $5, $6)
-//         RETURNING *;
-//         `,
-//             [user_id, title, description, price, image, category_id]
-//         );
-//         const product = response.rows[0];
-//         return product
-//     } catch (error) {
-//         console.log("Error")
-//     }
-// }
-
-async function createProduct({
-    
-})
-const getAllProducts = async () => {
+// DATABASE FUNCTIONS
+async function getAllProducts() {
     try {
-        const response = await client.query(`
-        SELECT * FROM products
-        `);
-        const data = response.rows;
-        return data;
-    } catch (error) {
-        console.error(error);
-    }
-};
-
-const getProductById = async (id) => {
-    try {
-        const response = await client.query(`
-        SELECT * FROM products WHERE id = $1;
-        `,
-            [id]
+        const { rows } = await client.query(
+            `
+            SELECT * FROM products
+            `
         );
-        const data = response.rows[0];
-        return data;
+        return rows;
     } catch (error) {
-        console.error(error);
+    console.log("Error: Problem retrieving all products...", error);
     }
-};
+}
 
+async function getProductById(id) {
+    try {
+      const {
+        rows: [product],
+      } = await client.query(`
+      SELECT * FROM products
+      WHERE id = $1;
+      `, [id]);
+      console.log(product)
+      return product;
+    } catch (error) {
+      console.error("Error: Problem getting products by Id...", error);
+    }
+  }
+
+async function getProductByName(title) {
+    try {
+        const {
+            rows: [product],
+        } = await client.query(
+        `
+        SELECT * FROM products
+        WHERE title = $1;
+        `, [title]);
+        return product;
+    } catch (error) {
+        console.error("Error: Problem getting product title...", error);
+    }
+}
+
+async function createProduct({ title, description, authorId, distId }) {
+    try {
+        const {
+            rows: [product],
+        } = await client.query(
+        `
+        INSERT INTO products (title, description, "authorId", "distId")
+        VALUES ($1, $2, $3, $4)
+        RETURNING *;
+        `,
+        [ title, description, authorId, distId ]
+        );
+        return product;
+    } catch (error) {
+        console.error("Error: Problem creating product...")
+    }
+}
+
+// Need to implement Admin capabilities ++ Booleans ++Admin profile?
 async function updateProduct({ id, title, description, price, quantity }) {
     try {
         if (title) {
@@ -120,7 +131,8 @@ const destroyProduct = async (id) => {
 module.exports = {
     createProduct,
     getAllProducts,
-    updateProduct,
     getProductById,
+    getProductByName,
+    updateProduct,
     destroyProduct
 };

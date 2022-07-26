@@ -3,6 +3,7 @@ const client = require("./client");
 const {
   createUser,
   createDistributor,
+  createAuthors,
 } = require('./')
 
 async function dropTables() {
@@ -116,12 +117,39 @@ async function createInitialDistributor() {
   }
 }
 
+async function createInitialAuthors() {
+  try {
+    console.log("Starting to create authors...")
+
+    const authorsToCreate = [
+      {
+        name: "Scott Snyder",
+        description: "Scott Snyder is an American writer. He is known for his 2006 short story collection Voodoo Heart, and his comic book writing, including American Vampire, Detective Comics, Batman, Wytches, Swamp Thing, and Justice League.",
+      },
+      {
+        name: "Stan Lee",
+        description: "Stan Lee was an American comic book writer, editor, publisher, and producer. He rose through the ranks of a family-run business called Timely Publications which would later become Marvel Comics.",
+      },
+    ]
+    const authors = await Promise.all(authorsToCreate.map(createAuthors))
+
+    console.log("authors created:")
+    console.log(authors)
+
+    console.log("Finished creating authors!")
+  } catch (error) {
+    console.error("Error creating authors!")
+    throw error
+  }
+}
+
 async function rebuildDB() {
     try {
         await dropTables()
         await createTables()
         await createInitialUsers()
         await createInitialDistributor()
+        await createInitialAuthors()
     } catch (error) {
         console.log("Error during rebuildDB")
         throw error
