@@ -1,28 +1,31 @@
 const { client } = require("./client");
 
-async function createProduct({
-    user_id,
-    title,
-    description,
-    price,
-    image,
-    category_id,
-}) {
-    try {
-        const response = await client.query(`
-        INSERT INTO products(user_id,title, descriptio, price, image,category_id)
-        VALUES($1, $2, $3, $4, $5, $6)
-        RETURNING *;
-        `,
-            [user_id, title, description, price, image, category_id]
-        );
-        const product = response.rows[0];
-        return product
-    } catch (error) {
-        console.log("Error")
-    }
-}
+// async function createProduct({
+//     user_id,
+//     title,
+//     description,
+//     price,
+//     image,
+//     category_id,
+// }) {
+//     try {
+//         const response = await client.query(`
+//         INSERT INTO products(user_id,title, descriptio, price, image,category_id)
+//         VALUES($1, $2, $3, $4, $5, $6)
+//         RETURNING *;
+//         `,
+//             [user_id, title, description, price, image, category_id]
+//         );
+//         const product = response.rows[0];
+//         return product
+//     } catch (error) {
+//         console.log("Error")
+//     }
+// }
 
+async function createProduct({
+    
+})
 const getAllProducts = async () => {
     try {
         const response = await client.query(`

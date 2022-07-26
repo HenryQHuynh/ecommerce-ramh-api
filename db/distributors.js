@@ -1,4 +1,4 @@
-const { client } = require("./client");
+const client = require("./client");
 
 // async function createCategories({ name }) {
 //     try {
@@ -30,14 +30,14 @@ async function getAllDistributors() {
     }
 }
 
-async function getDistributorsById(id) {
+async function getDistributorsById(distId) {
     try {
       const {
         rows: [distributor],
       } = await client.query(`
       SELECT * FROM distributors
       WHERE id = $1;
-      `, [id]);
+      `, [distId]);
       console.log(distributor)
       return distributor;
     } catch (error) {
@@ -62,7 +62,7 @@ async function getDistributorsByName(name) {
 
 // Do I need to create a attachDistributorsToProducts function... I wonder...
 
-async function createDistributors({ name, description }) {
+async function createDistributor({ name, description }) {
     try {
       const {
         rows: [distributor],
@@ -107,6 +107,6 @@ module.exports = {
     getAllDistributors,
     getDistributorsById,
     getDistributorsByName,
-    createDistributors,
+    createDistributor,
     destroyDistributors
 };

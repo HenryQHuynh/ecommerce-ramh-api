@@ -1,4 +1,4 @@
-const { client } = require("./client");
+const client = require("./client");
 
 // DATABASE FUNCTIONS
 async function getAllAuthors() {

@@ -2,7 +2,8 @@ const client = require("./client");
 
 const {
   createUser,
-} = require('./users')
+  createDistributor,
+} = require('./')
 
 async function dropTables() {
     console.log('Hey man, Dropping All Tables...');
@@ -70,31 +71,57 @@ async function dropTables() {
     }
   }
 
+async function createInitialUsers() {
+  console.log("Starting to create users...")
+  try {
+    const usersToCreate = [
+      { username: "Max", password: "HatesZoom" },
+      { username: "Ryan", password: "BenIsTheBest" },
+      { username: "Aandrea", password: "BootStrap4Lyfe" },
+    ]
+    const users = await Promise.all(usersToCreate.map((createUser)))
 
-  async function createInitialUsers() {
-    console.log("Starting to create users...")
-    try {
-      const usersToCreate = [
-        { username: "Max", password: "HatesZoom" },
-        { username: "Ryan", password: "BenIsTheBest" },
-        { username: "Aandrea", password: "BootStrap4Lyfe" },
-      ]
-      const users = await Promise.all(usersToCreate.map((createUser)))
-  
-      console.log("Users created:")
-      console.log(users)
-      console.log("Finished creating users!")
-    } catch (error) {
-      console.log("Error creating users!")
-      throw error
-    }
+    console.log("Users created:")
+    console.log(users)
+    console.log("Finished creating users!")
+  } catch (error) {
+    console.log("Error creating users!")
+    throw error
   }
+}
+
+async function createInitialDistributor() {
+  try {
+    console.log("Starting to create distributors...")
+
+    const distributorsToCreate = [
+      {
+        name: "MARVEL",
+        description: "Marvel Comics is a brand name and primary imprint of Marvel Worldwide, Inc.!",
+      },
+      {
+        name: "DC Comics",
+        description: "DC Comics, Inc. is an American comic book publisher and the flagship unit of DC Entertainment.",
+      },
+    ]
+    const distributors = await Promise.all(distributorsToCreate.map(createDistributor))
+
+    console.log("distributors created:")
+    console.log(distributors)
+
+    console.log("Finished creating distributors!")
+  } catch (error) {
+    console.error("Error creating distributors!")
+    throw error
+  }
+}
 
 async function rebuildDB() {
     try {
         await dropTables()
         await createTables()
         await createInitialUsers()
+        await createInitialDistributor()
     } catch (error) {
         console.log("Error during rebuildDB")
         throw error
