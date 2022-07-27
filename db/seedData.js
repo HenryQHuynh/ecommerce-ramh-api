@@ -16,7 +16,7 @@ async function dropTables() {
         DROP TABLE IF EXISTS cart;
         DROP TABLE IF EXISTS orders;
         DROP TABLE IF EXISTS products;
-
+        DROP TABLE IF EXISTS categories;
         DROP TABLE IF EXISTS authors;
         DROP TABLE IF EXISTS distributors;
         DROP TABLE IF EXISTS users;
@@ -48,7 +48,11 @@ async function dropTables() {
           name VARCHAR(255) UNIQUE NOT NULL,
           description TEXT NOT NULL
         );
-
+        CREATE TABLE categories (
+          id SERIAL PRIMARY KEY,
+          name VARCHAR(255) UNIQUE NOT NULL,
+          description TEXT NOT NULL 
+        );
         CREATE TABLE products (
           id SERIAL PRIMARY KEY,
           title VARCHAR(255) UNIQUE NOT NULL,
