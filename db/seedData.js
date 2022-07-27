@@ -69,6 +69,7 @@ async function dropTables() {
         );
         CREATE TABLE cart (
           id SERIAL PRIMARY KEY,
+          "productId" INTEGER REFERENCES products(id),
           "userId" INTEGER REFERENCES users(id)
         );
         CREATE TABLE reviews (
