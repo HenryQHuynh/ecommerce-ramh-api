@@ -21,6 +21,8 @@
     "mdb-react-ui-kit": "^4.1.0",
     "mdb-ui-kit": "^4.3.0",
     "morgan": "^1.10.0",
+    "nodemon": "^2.0.19",
+    "pg": "^8.7.3",
     "react": "^18.2.0",
     "react-bootstrap": "^2.4.0",
     "react-dom": "^18.2.0",
@@ -30,6 +32,9 @@
     "web-vitals": "^2.1.4"
   },
   "scripts": {
+    "seed:dev": "nodemon ./db/seed.js",
+    "seed": "node ./db/seed.js",
+    "start:dev": "nodemon server.js",
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
@@ -52,5 +57,8 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
+  },
+  "devDependencies": {
+    "@faker-js/faker": "^7.3.0"
   }
 }
