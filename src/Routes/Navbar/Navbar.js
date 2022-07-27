@@ -8,6 +8,7 @@ import { useState, useEffect } from "react";
 import "./Navbar.css";
 import Home from "../Home/Home.jsx";
 import Products from "../Products/Products.jsx"
+import Singleproduct from "../Singleproduct/Singleproduct.jsx"
 const NavItem = (props) => <Box as="a" href="#" fontSize="sm" {...props} />;
 
 export const Navbar = () => {
@@ -140,6 +141,7 @@ export const Navbar = () => {
       <Routes>
         <Route path="*" element={<Home token={token} />} />
         <Route path="products" element ={<Products />} />
+        <Route path="singleproduct" element ={<Singleproduct />} />
         {/* <Route path="events" element ={<Events />} /> */}
         {/* <Route path="profile" element={<Profile token={token} />} /> */}
         <Route path="subscribe" element={<Subscribe />} />
