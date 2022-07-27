@@ -5,6 +5,7 @@ import Register from "../Register/Register.jsx";
 import Login from "../Login/Login.jsx";
 import { useState, useEffect } from "react";
 import Home from "../Home/Home.jsx";
+import Products from "../Products/Products.jsx"
 const NavItem = (props) => <Box as="a" href="#" fontSize="sm" {...props} />;
 
 export const Navbar = () => {
@@ -47,7 +48,7 @@ export const Navbar = () => {
                   fontWeight: "bold",
                 }}
               >
-                Products
+                Comics
               </Link>
             </NavItem>
             <NavItem _hover={{ borderBottomWidth: "2px" }}>
@@ -121,7 +122,7 @@ export const Navbar = () => {
       </Box>
       <Routes>
         <Route path="*" element={<Home token={token} />} />
-        {/* <Route path="products" element ={<Products />} /> */}
+        <Route path="products" element ={<Products />} />
         {/* <Route path="events" element ={<Events />} /> */}
         {/* <Route path="profile" element={<Profile token={token} />} /> */}
         {/* <Route path="subscribe" element ={<Subscribe />} /> */}
