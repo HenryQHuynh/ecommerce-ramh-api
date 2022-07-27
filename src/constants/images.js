@@ -10,6 +10,17 @@ import darkknight from '../assets/darkknight.jpg'
 import superman from '../assets/superman.jpg'
 import poisonivypng from '../assets/poisonivy.png'
 import ironman from '../assets/ironman.png'
+import xstatic from '../assets/xstatic.jpeg'
+import thesixth from '../assets/thesixth.jpeg'
+import giants from '../assets/giants.webp'
+import antman from '../assets/antman.jpeg'
+import starwars from '../assets/starwars.jpeg'
+import berlin from '../assets/berlin.webp'
+import yearone from '../assets/yearone.webp'
+import transmetro from '../assets/transmetro.jpeg'
+import strangeamor from '../assets/strangeamor.jpeg'
+import swamp from '../assets/swamp.jpeg'
+
 export default {
     background,
     backgroundtwo,
@@ -22,5 +33,17 @@ export default {
     darkknight,
     superman,
     poisonivypng,
-    ironman
+    ironman,
+    xstatic,
+    thesixth,
+    giants,
+    antman,
+    starwars,
+    berlin,
+    yearone,
+    transmetro,
+    strangeamor,
+    swamp
+
+
 }
