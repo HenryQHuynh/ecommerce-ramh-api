@@ -63,8 +63,8 @@ async function dropTables() {
         CREATE TABLE orders (
           id SERIAL PRIMARY KEY,
           name VARCHAR(255) UNIQUE NOT NULL,
-          description TEXT NOT NULL,
           "productId" INTEGER REFERENCES products(id),
+          "userId" INTEGER REFERENCES users(id),
           count INTEGER
         );
         CREATE TABLE cart (
