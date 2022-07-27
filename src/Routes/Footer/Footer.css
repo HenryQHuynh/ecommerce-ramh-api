@@ -1,0 +1,13 @@
+.footer{
+    position: sticky;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    background: #152D35;
+    display: grid;
+    place-items: center;
+    padding: 50px;
+  }
+  .temp-footer{
+       color: white;
+   }

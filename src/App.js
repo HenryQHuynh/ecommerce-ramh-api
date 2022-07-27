@@ -2,7 +2,6 @@ import React from "react";
 import { Outlet } from "react-router-dom";
 import Navbar from "./Routes/Navbar/Navbar";
 import "./App.css";
-// import { images } from "../src/components";
 
 function App() {
   return (
