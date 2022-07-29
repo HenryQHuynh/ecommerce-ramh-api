@@ -44,70 +44,35 @@ async function getProductByName(title) {
     }
 }
 
-async function createProduct({ title, description, authorId, distId }) {
+async function createProduct({
+    name,
+    description,
+    photoUrl,
+    authorId,
+    distId,
+    department,
+    price,
+    inStock,
+    quantity,
+    count,
+}) {
     try {
         const {
             rows: [product],
         } = await client.query(
             `
-        INSERT INTO products (title, description, "authorId", "distId")
-        VALUES ($1, $2, $3, $4)
+        INSERT INTO products(name, description, "photoUrl", authorId, distId, quantity, price, department, "inStock",  count)
+        VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
         RETURNING *;
-        `,
-            [title, description, authorId, distId]
+      `,
+            [name, description, photoUrl, authorId, distId, quantity, price, department, inStock, count]
         );
+
         return product;
     } catch (error) {
         console.error("Error: Problem creating product...")
     }
 }
-
-// Need to implement Admin capabilities ++ Booleans ++Admin profile?
-// Need Max to explain to me how this updateProduct works
-// async function updateProduct({ id, title, description, price, quantity }) {
-//     try {
-//         if (title) {
-//             await client.query(`
-//             UPDATE products
-//             SET title = $1
-//             WHERE id = $2;
-//             `,
-//                 [title, id]
-//             );
-//         }
-//         if (description) {
-//             await client.query(`
-//             UPDATE products
-//             SET description = $1
-//             WHERE id = $2;
-//             `,
-//                 [description, id]
-//             );
-//         }
-//         if (price) {
-//             await client.query(`
-//             UPDATE products
-//             SET price = $1
-//             WHERE id = $2;
-//             `,
-//                 [price, id]
-//             );
-//         }
-//         if (quantity) {
-//             await client.query(`
-//             UPDATE products
-//             SET quantity = $1
-//             WHERE id = $2;
-//             `,
-//                 [quantity, id]
-//             );
-//         }
-//         const product = await getProductById(id);
-//         return product;
-//     } catch (error) {
-//         console.error(error);
-//     }
-// }
 
 async function updateProduct({ id, description, authorId, distId }) {
     const fields = { description, authorId, distId };
@@ -137,6 +102,44 @@ async function updateProduct({ id, description, authorId, distId }) {
     }
 }
 
+async function addCount(id) {
+    const product = await getProductById(id);
+  
+    try {
+      const { rows } = await client.query(
+        `
+      UPDATE products
+      SET count = $1
+      WHERE id = $2
+      RETURNING *
+      `,
+        [product.count + 1, id]
+      );
+      return rows;
+    } catch (error) {
+        console.error("Problem updating products!", error);
+    }
+  }
+
+  async function subtractCount(id) {
+    const product = await getProductById(id);
+  
+    try {
+      const { rows } = await client.query(
+        `
+      UPDATE products
+      SET count = $1
+      WHERE id = $2
+      RETURNING *
+      `,
+        [product.count - 1, id]
+      );
+      return rows;
+    } catch (error) {
+        console.error("Problem updating products!", error);
+    }
+  }
+
 const destroyProduct = async (id) => {
     await client.query(`
     DELETE FROM reviews WHERE product_id = $1;
@@ -163,5 +166,7 @@ module.exports = {
     getProductById,
     getProductByName,
     updateProduct,
-    destroyProduct
+    destroyProduct,
+    addCount,
+    subtractCount
 };
