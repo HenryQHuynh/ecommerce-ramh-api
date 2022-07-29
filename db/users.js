@@ -152,6 +152,46 @@ async function promoteUser(userId, role) {
   }
 }
 
+async function deleteUser(userId) {
+  try {
+    const {
+      rows: [order],
+    } = await client.query(
+      `
+      DELETE FROM orders
+      WHERE id = $1
+      RETURNING *
+    `,
+      [userId]
+    );
+
+    const {
+      rows: [cart],
+    } = await client.query(
+      `
+      DELETE FROM cart
+      WHERE id = $1
+      RETURNING *
+    `,
+      [userId]
+    );
+    const {
+      rows: [user],
+    } = await client.query(
+      `
+      DELETE FROM users
+      WHERE id = $1
+      RETURNING *
+    `,
+      [userId]
+    );
+
+    return { order, cart, user };
+  } catch (error) {
+    console.error(error);
+  }
+}
+
 module.exports = {
   createUser,
   getUser,
@@ -159,5 +199,6 @@ module.exports = {
   getUserByUsername,
   getUsers,
   updateUser,
-  promoteUser
+  promoteUser,
+  deleteUser
 }

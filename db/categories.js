@@ -11,7 +11,7 @@ async function createCategories({ name }) {
         );
         return response;
     } catch (error) {
-        throw error;
+        console.error(error);
     }
 }
 
@@ -26,9 +26,9 @@ async function deleteCategorie({ id }) {
         );
         return categories
     } catch (error) {
-        throw error;
-    };
-};
+        console.error(error);
+    }
+}
 
 async function getCategoryByName({ name }) {
     try {
@@ -42,8 +42,12 @@ async function getCategoryByName({ name }) {
 
         return categories
     } catch (error) {
-        throw error;
-    };
-};
+        console.error(error);
+    }
+}
 
-module.exports = { createCategories, deleteCategorie, getCategoryByName }
+module.exports = {
+    createCategories,
+    deleteCategorie,
+    getCategoryByName
+}
