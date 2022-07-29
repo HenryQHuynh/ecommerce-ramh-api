@@ -10,8 +10,8 @@ apiRouter.use(async (req, res, next) => {
   const prefix = "Bearer ";
   const auth = req.header("Authorization");
 
-  // if no Authorization header, pass on by
-  if (!auth) {
+// if no Authorization header, pass on by
+if (!auth) {
     next();
     // if Authorization header exists, pull token from header
   } else if (auth.startsWith(prefix)) {
@@ -51,17 +51,17 @@ function verifyToken(req, res, next) {
   //get Auth header
   const bearerHeader = req.headers["authorization"];
   // console.log("bearerheader", bearerHeader);
-  // check if bearer is undefined
+
   if (typeof bearerHeader !== "undefined") {
     const bearer = bearerHeader.split(" ");
     //  console.log("bearer", bearer);
-    // get token on index 1 from array
+
     const bearerToken = bearer[1];
     // console.log("bearertoken", bearerToken);
-    // adding token to req object - set token
+
     req.token = bearerToken;
     next();
-    // send forbidden error status code
+
   } else {
     res.sendStatus(403);
   }
@@ -69,7 +69,7 @@ function verifyToken(req, res, next) {
 
 apiRouter.get("/", (req, res) => {
   res.send({
-    message: "API is under construction!",
+    message: "API is under construction, please be patient!",
   });
 });
 

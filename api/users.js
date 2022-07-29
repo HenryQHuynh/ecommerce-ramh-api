@@ -1,6 +1,6 @@
 const express = require("express");
 const apiRouter = express.Router();
-// const verifyToken = require('./index.js');
+const verifyToken = require('./index.js');
 const jwt = require("jsonwebtoken");
 const { JWT_SECRET = "neverTell" } = process.env;
 
@@ -16,26 +16,6 @@ const {
   PasswordTooShortError,
   UnauthorizedError,
 } = require("../errors");
-
-function verifyToken(req, res, next) {
-  //get Auth header
-  const bearerHeader = req.headers["authorization"];
-  // console.log("bearerheader", bearerHeader);
-  // check if bearer is undefined
-  if (typeof bearerHeader !== "undefined") {
-    const bearer = bearerHeader.split(" ");
-    //  console.log("bearer", bearer);
-    // get token on index 1 from array
-    const bearerToken = bearer[1];
-    // console.log("bearertoken", bearerToken);
-    // adding token to req object - set token
-    req.token = bearerToken;
-    next();
-    // send forbidden error status code
-  } else {
-    res.sendStatus(403);
-  }
-}
 
 // POST /api/users/login
 apiRouter.post("/login", async (req, res, next) => {
@@ -144,4 +124,4 @@ apiRouter.get("/users", verifyToken, async (req, res, next) => {
   }
 });
 
-module.exports = apiRouter;
+module.exports = {apiRouter};
