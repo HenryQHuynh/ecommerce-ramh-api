@@ -47,4 +47,27 @@ apiRouter.get("/health", async (req, res, next) => {
 const usersRouter = require("./users");
 apiRouter.use("/users", usersRouter);
 
-module.exports = apiRouter;
+function verifyToken(req, res, next) {
+  //get Auth header
+  const bearerHeader = req.headers["authorization"];
+  // console.log("bearerheader", bearerHeader);
+  // check if bearer is undefined
+  if (typeof bearerHeader !== "undefined") {
+    const bearer = bearerHeader.split(" ");
+    //  console.log("bearer", bearer);
+    // get token on index 1 from array
+    const bearerToken = bearer[1];
+    // console.log("bearertoken", bearerToken);
+    // adding token to req object - set token
+    req.token = bearerToken;
+    next();
+    // send forbidden error status code
+  } else {
+    res.sendStatus(403);
+  }
+}
+
+module.exports = {
+  apiRouter,
+  verifyToken
+};

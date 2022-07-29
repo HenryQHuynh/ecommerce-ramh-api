@@ -4,12 +4,15 @@ const router = express.Router();
 const jwt = require("jsonwebtoken");
 const { JWT_SECRET = "neverTell" } = process.env;
 
+
+
 const {
   createUser,
   getUserByUsername,
   getUserById,
   getUser,
 } = require("../db/users");
+
 const {
   UserTakenError,
   PasswordTooShortError,

@@ -13,13 +13,13 @@ async function dropTables() {
       // drop all tables, in the correct order
       await client.query(`
         DROP TABLE IF EXISTS reviews;
-        DROP TABLE IF EXISTS cart;
         DROP TABLE IF EXISTS orders;
+        DROP TABLE IF EXISTS cart;
         DROP TABLE IF EXISTS products;
         DROP TABLE IF EXISTS categories;
         DROP TABLE IF EXISTS authors;
         DROP TABLE IF EXISTS distributors;
-        DROP TABLE IF EXISTS users;
+        DROP TABLE IF EXISTS users CASCADE;
         `);
         console.log("Hey man, we did the thing.")
     } catch (error) {
@@ -36,6 +36,8 @@ async function dropTables() {
         CREATE TABLE users (
           id SERIAL PRIMARY KEY,
           username VARCHAR(255) UNIQUE NOT NULL,
+          email VARCHAR(255) UNIQUE NOT NULL,
+          role TEXT NOT NULL,
           password VARCHAR(255) NOT NULL
         );
         CREATE TABLE distributors (
@@ -57,26 +59,32 @@ async function dropTables() {
           id SERIAL PRIMARY KEY,
           title VARCHAR(255) UNIQUE NOT NULL,
           description TEXT NOT NULL,
+          "photoUrl" TEXT NOT NULL,
+          price DECIMAL NOT NULL,
+          department TEXT NOT NULL,
+          "inStock" BOOLEAN,
+          count INTEGER NOT NULL,
           "authorId" INTEGER REFERENCES authors(id),
           "distId" INTEGER REFERENCES distributors(id)
         );
+        CREATE TABLE cart (
+          id SERIAL PRIMARY KEY,
+          "userId" INTEGER REFERENCES users(id),
+          "productId" INTEGER REFERENCES products(id),
+          status TEXT NOT NULL
+        );
         CREATE TABLE orders (
           id SERIAL PRIMARY KEY,
-          name VARCHAR(255) UNIQUE NOT NULL,
           "productId" INTEGER REFERENCES products(id),
           "userId" INTEGER REFERENCES users(id),
           count INTEGER
-        );
-        CREATE TABLE cart (
-          id SERIAL PRIMARY KEY,
-          "productId" INTEGER REFERENCES products(id),
-          "userId" INTEGER REFERENCES users(id)
         );
         CREATE TABLE reviews (
           id SERIAL PRIMARY KEY,
           name VARCHAR(255) UNIQUE NOT NULL,
           description TEXT NOT NULL,
-          "productId" INTEGER REFERENCES products(id)
+          "productId" INTEGER REFERENCES products(id),
+          "userId" INTEGER REFERENCES users(id)
         );
         `);
       console.log("Finished building tables!");
