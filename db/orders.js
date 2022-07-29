@@ -1,4 +1,5 @@
 const client = require("./client");
+const getCompletedCart = require('getCompletedCart');
 
 // reference routine_activities in fitness tracker
 // DATABASE FUNCTIONS
@@ -21,6 +22,38 @@ async function createOrder({ name, productId, userId }) {
     }
 }
 
+// ADMIN only
+async function getOrders() {
+    try {
+      const { rows } = await client.query(`
+        SELECT * FROM orders
+      `);
+  
+      const cartArr = [];
+      for (let i = 0; i < rows.length; i++) {
+        const cart = await getCompletedCart({ userId: rows[i].cartId });
+  
+        const totalArr = [];
+  
+        if (cart !== []) {
+          cart.products.map((product) => {
+            totalArr.push(parseFloat(product.price * product.count));
+          });
+  
+          const total = totalArr.reduce((a, b) => a + b, 0).toFixed(2);
+  
+          cartArr.push({ rows: rows[i], cart, total });
+        }
+      }
+  
+      return { cartArr };
+    } catch (error) {
+        console.error("Error: Problem creating an order list!...", error)
+    }
+  }
+
 module.exports = {
-    createOrder
+    createOrder,
+    getOrders,
+    
 };
