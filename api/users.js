@@ -1,10 +1,8 @@
 const express = require("express");
 const apiRouter = express.Router();
-const verifyToken = require('./index.js');
+// const verifyToken = require('./index.js');
 const jwt = require("jsonwebtoken");
 const { JWT_SECRET = "neverTell" } = process.env;
-
-
 
 const {
   createUser,
@@ -18,6 +16,26 @@ const {
   PasswordTooShortError,
   UnauthorizedError,
 } = require("../errors");
+
+function verifyToken(req, res, next) {
+  //get Auth header
+  const bearerHeader = req.headers["authorization"];
+  // console.log("bearerheader", bearerHeader);
+  // check if bearer is undefined
+  if (typeof bearerHeader !== "undefined") {
+    const bearer = bearerHeader.split(" ");
+    //  console.log("bearer", bearer);
+    // get token on index 1 from array
+    const bearerToken = bearer[1];
+    // console.log("bearertoken", bearerToken);
+    // adding token to req object - set token
+    req.token = bearerToken;
+    next();
+    // send forbidden error status code
+  } else {
+    res.sendStatus(403);
+  }
+}
 
 // POST /api/users/login
 apiRouter.post("/login", async (req, res, next) => {
@@ -46,39 +64,49 @@ apiRouter.post("/login", async (req, res, next) => {
 });
 
 // POST /api/users/register
-apiRouter.post("/register", async (req, res, next) => {
-  const { username, password } = req.body;
-  try {
-    const existingUser = await getUserByUsername(username);
-    if (existingUser.length) {
-      next({
-        name: "That username is taken",
-        message: UserTakenError(username),
-      });
-    } else if (password.length < 8) {
-      next({
-        message: PasswordTooShortError(),
-        name: "Password needs to be 8 or more characters!",
-      });
-    } else {
-      const newUser = await createUser({ username, password });
-      const token = jwt.sign(
-        { id: newUser.id, username: newUser.username },
-        JWT_SECRET
-      );
-      res.send({
-        message: "New user created!",
-        token,
-        user: {
-          id: newUser.id,
-          username: newUser.username,
-        },
-      });
+apiRouter.post('/register', async (req, res, next) => {
+    const {username, password} = req.body;
+    const passwordLength = password.length;
+    
+    if (passwordLength < 8) {
+        next ({
+            error: 'Password must be at least 8 characters long.',
+            name: 'PasswordLengthError',
+            message: PasswordTooShortError()
+        })
     }
-  } catch (error) {
-    next(error);
-  }
-});
+
+    try {
+        const _user = await getUserByUsername(username)
+
+        if (_user) {
+            next({
+                error: 'Username already in use.',
+                name: 'UserExistsError',
+                message: UserTakenError()
+            });
+        }
+
+        const user = await createUser({username, password});
+
+        const token = jwt.sign(
+            { 
+            id: user.id, 
+            username
+            }, 
+            JWT_SECRET, 
+            { expiresIn: '1w'}
+        );
+
+        res.send({
+            message: "Thank you for signing up!",
+            token: token,
+            user: user
+        })
+    } catch ({error, name, message}) {
+        next({ error, name, message })
+    }
+})
 
 // GET /api/users/me
 apiRouter.get("/me", async (req, res, next) => {
