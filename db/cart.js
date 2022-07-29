@@ -1,6 +1,28 @@
 const client = require("./client");
 
 // DATABASE FUNCTIONS
+async function createCart({ userId, productId, status = "created" }) {
+    try {
+      const {
+        rows: [cart],
+      } = await client.query(
+        `
+        INSERT INTO cart("userId", "productId", status)
+        VALUES ($1, $2, $3)
+        RETURNING *;
+      `,
+        [userId, productId, status]
+      );
+  
+      return cart;
+    } catch (error) {
+        console.error("Error: Problem creating cart...", error)
+    }
+  }
+
+
+
+
 async function getCompletedCart({ userId }) {
     let i = 0;
     try {
@@ -34,5 +56,7 @@ async function getCompletedCart({ userId }) {
   }
 
 module.exports = {
+    createCart,
     getCompletedCart,
+    
 };
