@@ -16,7 +16,7 @@ server.use("/api", apiRouter);
 
 const client = require("./db/client");
 
-server.use((error, req, res) => {
+server.use((error, req, res, next) => {
   if (res.statusCode < 400) res.status(500);
   res.send({
     error: error.message,
