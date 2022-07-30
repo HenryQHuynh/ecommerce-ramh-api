@@ -45,48 +45,38 @@ apiRouter.post("/login", async (req, res, next) => {
 
 // POST /api/users/register
 apiRouter.post('/register', async (req, res, next) => {
-    const {username, password} = req.body;
-    const passwordLength = password.length;
-    
-    if (passwordLength < 8) {
-        next ({
-            error: 'Password must be at least 8 characters long.',
-            name: 'PasswordLengthError',
-            message: PasswordTooShortError()
-        })
+  const { username, password } = req.body;
+  try {
+    const existingUser = await getUserByUsername(username);
+    if (existingUser.length) {
+      next({
+        name: "That username is taken",
+        message: UserTakenError(username),
+      });
+    } else if (password.length < 8) {
+      next({
+        message: PasswordTooShortError(),
+        name: "Password needs to be 8 or more characters!",
+      });
+    } else {
+      const newUser = await createUser({ username, password });
+      const token = jwt.sign(
+        { id: newUser.id, username: newUser.username },
+        JWT_SECRET
+      );
+      res.send({
+        message: "New user created!",
+        token,
+        user: {
+          id: newUser.id,
+          username: newUser.username,
+        },
+      });
     }
-
-    try {
-        const _user = await getUserByUsername(username)
-
-        if (_user) {
-            next({
-                error: 'Username already in use.',
-                name: 'UserExistsError',
-                message: UserTakenError()
-            });
-        }
-
-        const user = await createUser({username, password});
-
-        const token = jwt.sign(
-            { 
-            id: user.id, 
-            username
-            }, 
-            JWT_SECRET, 
-            { expiresIn: '1w'}
-        );
-
-        res.send({
-            message: "Thank you for signing up!",
-            token: token,
-            user: user
-        })
-    } catch ({error, name, message}) {
-        next({ error, name, message })
-    }
-})
+  } catch (error) {
+    next(error);
+  }
+});
 
 // GET /api/users/me
 apiRouter.get("/me", async (req, res, next) => {
