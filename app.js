@@ -11,7 +11,7 @@ server.use(cors());
 server.use(express.json());
 server.use(express.urlencoded({ extended: true }));
 
-const apiRouter = require("./api");
+const { apiRouter } = require("./api");
 server.use("/api", apiRouter);
 
 const client = require("./db/client");

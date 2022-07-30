@@ -1,6 +1,6 @@
 const express = require("express");
 const apiRouter = express.Router();
-const verifyToken = require('./index.js');
+const { verifyToken } = require('./middleWare.js');
 const jwt = require("jsonwebtoken");
 
 const {
