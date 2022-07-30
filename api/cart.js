@@ -86,4 +86,4 @@ apiRouter.post("/checkout", async (req, res, next) => {
 //     }
 // });
 
-module.exports = { apiRouter };
+module.exports = apiRouter;
