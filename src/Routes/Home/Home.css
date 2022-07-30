@@ -1,0 +1,68 @@
+@import url(https://fonts.googleapis.com/css?family=Sigmar+One);
+
+.home-container{
+    min-height: 100vh;
+    background: white;
+    position: relative;
+    z-index: 1;
+    
+}
+.poisonivy {
+    left: 0;
+    top: 50%;
+    right: 0;
+    margin: auto;
+    padding: 10px;
+    position: absolute;
+    text-align: right;
+    padding: 10px 85px;
+}
+
+.poisonivy-text{
+    color: black;
+    font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
+}
+.subscription-bar-row{
+    margin-top: 60px;
+    padding-top: 40px;
+    background-color: #256276;
+}
+.subscription-bar{
+    margin: 0;
+    padding: 0;
+
+}
+
+.content-one{
+    padding-top: 60px;
+}
+.content-one-row{
+    display: flex;
+    align-items: center;
+    font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
+}
+.content-two{
+    padding-top: 60px; 
+}
+.content-two-row{
+    display: flex;
+    align-items: center;
+    font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
+}
+
+.new-comics{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding-top: 60px;
+    padding-bottom: 60px;
+    font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
+}
+
+.new-releases{
+    font-size: 30px;
+    color: #256276;
+    padding-bottom: 20px;
+    font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
+    font-weight: bold;
+}
