@@ -48,12 +48,12 @@ apiRouter.post('/register', async (req, res, next) => {
   const { username, password } = req.body;
   try {
     const existingUser = await getUserByUsername(username);
-    if (existingUser.length) {
+    if (existingUser) {
       next({
         name: "That username is taken",
         message: UserTakenError(username),
       });
-    } else if (password.length < 8) {
+    } else if (password < 8) {
       next({
         message: PasswordTooShortError(),
         name: "Password needs to be 8 or more characters!",
