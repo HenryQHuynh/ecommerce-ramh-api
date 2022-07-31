@@ -6,13 +6,7 @@ const server = express();
 const morgan = require("morgan");
 
 server.use(morgan("dev"));
-server.use(cors({
-  origin: [
-    "https://tranquil-plains-39024.herokuapp.com/",
-    "http://localhost:5432/ramh"
-  ],
-  credentials: true
-}));
+server.use(cors());
 
 server.use(express.json());
 server.use(express.urlencoded({ extended: true }));
