@@ -1,17 +1,31 @@
 const express = require("express");
-// establish api routes
-const apiRouter = express.Router();
+const router = express.Router();
 const jwt = require("jsonwebtoken");
-const { JWT_SECRET } = process.env;
+const { JWT_SECRET = "WERAMH" } = process.env;
 const { getUserById } = require("../db");
 
 // middleware to create req.user
-apiRouter.use(async (req, res, next) => {
+// GET /api/health
+router.get("/health", async (req, res, next) => {
+  res.send({ message: "All is well, the server is good to go." });
+  next();
+});
+
+// Blank /api/
+router.get("/", (req, res, next) => {
+  res.send({
+    message: "API is under construction, please be patient!",
+  });
+  next();
+});
+
+// Authorization
+router.use(async (req, res, next) => {
   const prefix = "Bearer ";
   const auth = req.header("Authorization");
 
 // if no Authorization header, pass on by
-if (!auth) {
+  if (!auth) {
     next();
     // if Authorization header exists, pull token from header
   } else if (auth.startsWith(prefix)) {
@@ -19,11 +33,10 @@ if (!auth) {
 
     try {
       // verify token matches 
-      const { id } = jwt.verify(token, JWT_SECRET);
-
-      if (id) {
+      const { id: userId } = jwt.verify(token, JWT_SECRET);
+      if (userId) {
         // set req.user with user object
-        req.user = await getUserById(id);
+        req.user = await getUserById(userId);
         next();
       }
     } catch ({ name, message }) {
@@ -37,42 +50,24 @@ if (!auth) {
   }
 });
 
-// test route to check status of api
-apiRouter.get("/health", async (req, res, next) => {
-  res.send({ message: "All is well, the server is good to go" });
-  next();
-});
+// ROUTER: /api/products
+const productsRouter = require("./product");
+router.use("/products", productsRouter);
 
-// pulls usersRouters and establishes routes at api/users
+// ROUTE /api/users
 const usersRouter = require("./users");
-apiRouter.use("/users", usersRouter);
+router.use("/users", usersRouter);
 
-// function verifyToken(req, res, next) {
-//   //get Auth header
-//   const bearerHeader = req.headers["authorization"];
-//   // console.log("bearerheader", bearerHeader);
+// ROUTER: /api/authors
+const authorsRouter = require("./authors");
+router.use("/authors", authorsRouter);
 
-//   if (typeof bearerHeader !== "undefined") {
-//     const bearer = bearerHeader.split(" ");
-//     //  console.log("bearer", bearer);
+// ORDERS: /api/orders
+const ordersRouter = require("./orders");
+router.use("/orders", ordersRouter);
 
-//     const bearerToken = bearer[1];
-//     // console.log("bearertoken", bearerToken);
+// ADMIN: /api/admin
+const adminRouter = require('./admin');
+router.use("/admin", adminRouter);
 
-//     req.token = bearerToken;
-//     next();
-
-//   } else {
-//     res.sendStatus(403);
-//   }
-// }
-
-apiRouter.get("/", (req, res) => {
-  res.send({
-    message: "API is under construction, please be patient!",
-  });
-});
-
-module.exports = {
-  apiRouter
-};
+module.exports = router;

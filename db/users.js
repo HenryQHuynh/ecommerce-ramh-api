@@ -1,84 +1,174 @@
-/* eslint-disable no-useless-catch */
-const client = require("./client");
-const bcrypt = require("bcrypt"); //Extra credit attempt!
+const client = require("../client");
+const bcrypt = require("bcrypt");
+const SALT_COUNT = 10;
 
 // database functions
-  async function createUser({ username, email, role, password }) {
-      try {
-      const SALT_COUNT = 10;
-      const hashedPassword = await bcrypt.hash(password, SALT_COUNT);
-      const {
-        rows: [user]
-      } = await client.query(
-        `
-          INSERT INTO users(username, email, role, password)
-          VALUES($1,$2,$3,$4)
-          ON CONFLICT (username) DO NOTHING
-          RETURNING *;
-        `,
-        [username, email, role, hashedPassword]
-      );
-  
-      delete user.password;
-  
-      return user;
-    } catch (error) {
-      console.error(error)
-    }
-  }
-
-async function getUser({ username, password }) {
+const createUser = async({ userEmail, password, isAdmin = false}) => {
   try {
-    const user = await getUserByUsername(username);
-    const hashedPassword = user.password;
-    const passwordsMatch = await bcrypt.compare(password, hashedPassword);
-
-    if (passwordsMatch) {
-      delete user.password;
-      return user;
-    }
-  } catch (error) {
-    console.error(error);
-  }
-}
-
-async function getUserById(id) {
-  try {
-    const {
-      rows: [user],
-    } = await client.query(`
-          SELECT *
-          FROM users
-          WHERE "id" = ${id};
-        `);
-    delete user.password;
-    return user;
-  } catch (error) {
-    console.error(error);
-  }
-}
-
-async function getUserByUsername(username) {
-  try {
-    const {
-      rows: [user],
-    } = await client.query(
+    const hashedPassword = await bcrypt.hash(password, SALT_COUNT);
+    const { rows } = await client.query(
       `
-        SELECT * FROM users
-        WHERE username = $1;
+      INSERT INTO users("userEmail", password, "isAdmin")
+      VALUES ($1, $2, $3)
+      RETURNING id, "userEmail", "isAdmin", "isActive";
       `,
-      [username]
+      [userEmail, hashedPassword, isAdmin]
     );
-
-    if (user === undefined) {
-      return null;
-    }
-
-    return user;
+    return rows[0];
   } catch (error) {
-    console.error(error);
+    console.error("Error: Problem creating user...", error)
+  }
+};
+
+const verifyUser = async (userEmail, password) => {
+  try {
+    const { rows } = await client.query(
+      `
+      SELECT id, "userEmail", password, "isAdmin"
+      FROM users
+      WHERE "userEmail" = $1
+      `,
+      [userEmail]
+    );
+    const match = await bcrypt.compare(password, rows[0].password);
+    return match ? rows : false;
+  } catch (error) {
+    console.error("Error: Problem verifying user...", error)
+  }
+};
+
+const getUserByEmail = async (userEmail) => {
+  try {
+    const { rows } = await client.query(
+      `
+      SELECT *
+      FROM users
+      WHERE "userEmail" = $1;
+      `,
+      [userEmail]
+    );
+    return rows;
+  } catch (error) {
+    console.error("Error: Problem getting user by email...", error)
+  }
+};
+
+async function getUserById(userId) {
+  try {
+    const { rows } = await client.query(
+      `
+      SELECT id, "userEmail", "isAdmin"
+      FROM users
+      WHERE "id" = $1;
+      `,
+      [userId]
+    );
+    return rows;
+  } catch (error) {
+    console.error("Error: Problem getting user by Id...", error);
   }
 }
+
+const getUserProfileById = async(userId) => {
+  try {
+    const { rows: user } = await client.query(
+      `
+      SELECT id, "userEmail' FROM users
+      WHERE id = $1;
+      `,
+      [userId]
+    );
+    const { rows: userOrders } = await client.query(
+      `
+      SELECT id FROM user_orders
+      WHERE "userId" = $1;
+      `,
+      [userId]
+    );
+    let arr = [];
+    for (const order of userOrders) {
+      const { rows: userOrder } = await client.query(
+        `
+        SELECT id AS "orderId", "orderComplete", "orderPrice"  FROM user_orders
+        WHERE id = $1;
+        `,
+        [order.id]
+      )
+      const { rows: orderDetails } = await client.query(
+        `
+        SELECT order_details."productId", order_details."productPrice", order_details.quantity, products.title, products."imageLink"
+        FROM order_details JOIN products
+        ON order_details."productId" = products.id
+        WHERE "orderId" = $1;
+        `,
+        [order.id]
+      )
+      const submitOrder = {
+        ...userOrder[0],
+        orderDetails,
+      }
+      arr.push(submitOrder);
+    }
+    const userProfile = {
+      ...user[0],
+      orders: arr,
+    };
+    console.log("User Profile: ", userProfile);
+    return userProfile;
+  } catch (error) {
+    console.error("Error: Problem getting user profile...", error);
+  }
+};
+
+const getUserCartById = async (userId) => {
+  try {
+    const { rows: order } = await client.query(
+      `
+      SELECT id AS "orderId", "orderPrice" FROM user_orders
+      WHERE "userId" = $1
+      AND "orderComplete" = false;
+      `,
+      [userId]
+    )
+    if (order.length) {
+      const { rows: details } = await client.query(
+        `
+        SELECT order_details."productId", order_details."productPrice", order_details.quantity, products.title, products."imageLink"
+        FROM order_details JOIN products
+        ON order_details."productId" = products.id
+        WHERE "orderId" = $1;
+        `,
+        [order[0].orderId]
+      )
+      let arr = [];
+      for (const item of details) {
+        arr.push(item);
+      }
+      const userCart = {
+        ...order[0],
+        orderDetails: arr,
+      }
+      return userCart;
+    } else return order;
+  } catch (error) {
+    console.error("Error: Problem getting user cart by Id...", error);
+  }
+};
+
+// async function getUser({ username, password }) {
+//   try {
+//     const user = await getUserByUsername(username);
+//     const hashedPassword = user.password;
+//     const passwordsMatch = await bcrypt.compare(password, hashedPassword);
+
+//     if (passwordsMatch) {
+//       delete user.password;
+//       return user;
+//     }
+//   } catch (error) {
+//     console.error(error);
+//   }
+// }
 
 // grab all users
 async function getUsers() {
@@ -118,35 +208,6 @@ async function updateUser(fieldsObject, userId) {
       Object.values(fieldsObject)
     );
     return user;
-  } catch (error) {
-    console.error(error);
-  }
-}
-
-async function promoteUser(userId, role) {
-  try {
-    role === "user"
-      ? await client.query(
-          `
-      UPDATE users
-      SET role='admin'
-      WHERE id=$1;
-    `,
-          [userId]
-        )
-      : await client.query(
-          `
-      UPDATE users
-      SET role='user'
-      WHERE id=$1;
-    `,
-          [userId]
-        );
-
-    const { rows } = await client.query(`
-      SELECT * FROM users
-    `);
-    return rows;
   } catch (error) {
     console.error(error);
   }
@@ -194,11 +255,13 @@ async function deleteUser(userId) {
 
 module.exports = {
   createUser,
-  getUser,
+  verifyUser,
+  getUserByEmail,
   getUserById,
-  getUserByUsername,
+  getUserProfileById,
+  getUserCartById,
   getUsers,
   updateUser,
-  promoteUser,
   deleteUser
+  // getUser,
 }

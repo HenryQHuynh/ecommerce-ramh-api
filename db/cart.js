@@ -1,218 +1,189 @@
-const client = require("./client");
+const client = require("../client");
+
+/*
+Ask if destructuring is going to cause some problems with { rows } again
+*/
+
 
 // DATABASE FUNCTIONS
-async function createCart({ userId, productId, status = "created" }) {
-    try {
-      const {
-        rows: [cart],
-      } = await client.query(
+const addToCart = async (userId, productPrice, productId, quantity) => {
+  const { rows: openOrder } = await client.query(
+    `
+    SELECT id, "orderPrice" FROM user_orders
+    WHERE "userId" = $1
+    AND "orderComplete" = false;
+  `,
+    [userId]
+  );
+  if (!openOrder.length) {
+    const newOrderPrice = Number(productPrice) * Number(quantity);
+    const { rows: newOrder } = await client.query(
+      `
+      INSERT INTO user_orders("userId", "orderPrice")
+      VALUES($1, $2)
+      RETURNING *;
+    `,
+      [userId, newOrderPrice]
+    );
+    const { rows: newOrderDetails } = await client.query(
+      `
+      INSERT INTO order_details("orderId", "productId", "productPrice", quantity)
+      values($1, $2, $3, $4)
+      RETURNING "productId", "productPrice", quantity;
+    `,
+      [newOrder[0].id, productId, productPrice, quantity]
+    );
+    const orderData = {
+      orderId: newOrder[0].id,
+      productId: newOrderDetails[0].productId,
+    };
+    return [orderData];
+  } else {
+    const updateOrderPrice =
+      Number(openOrder[0].orderPrice) + Number(productPrice) * Number(quantity);
+    const { rows: updateOrder } = await client.query(
+      `
+      UPDATE user_orders
+      SET "orderPrice" = $1
+      WHERE id = $2
+      RETURNING "orderPrice";
+    `,
+      [updateOrderPrice, openOrder[0].id]
+    );
+    const { rows: checkProduct } = await client.query(
+      `
+      SELECT "productId", quantity FROM order_details
+      WHERE "orderId" = $1
+      AND "productId" = $2;
+    `,
+      [openOrder[0].id, productId]
+    );
+    if (!checkProduct.length) {
+      const { rows: updateOrderDetails } = await client.query(
         `
-        INSERT INTO cart("userId", "productId", status)
-        VALUES ($1, $2, $3)
-        RETURNING *;
+        INSERT INTO order_details("orderId", "productId", "productPrice", quantity)
+        VALUES($1, $2, $3, $4)
+        RETURNING "productId", "productPrice", quantity;
       `,
-        [userId, productId, status]
+        [openOrder[0].id, productId, productPrice, quantity]
       );
-  
-      return cart;
-    } catch (error) {
-        console.error("Error: Problem creating cart...", error)
-    }
-  }
-
-  async function getCart({ userId }) {
-    let i = 0;
-    try {
-      const { rows } = await client.query(
-        `
-        SELECT * FROM cart
-        WHERE "userId" = $1 AND NOT status = 'completed'
-      `,
-        [userId]
-      );
-  
-      const cart = [];
-      for (let i = 0; i < rows.length; i++) {
-        rows[i].status === "processing" ? cart.push(rows[i]) : null;
-      }
-      if (rows.length > 0) {
-        if (cart.length > 0) {
-          const products = cart[0].productId;
-          const productArr = [];
-          for (i = 0; i < products.length; i++) {
-            const {
-              rows: [product],
-            } = await client.query(`
-              SELECT * FROM products
-              WHERE id = ${products[i]}
-            `);
-            productArr.push(product);
-          }
-  
-          return { id: cart[0].id, products: productArr, status: cart[0].status };
-        }
-  
-        const products = rows[0].productId;
-        const productArr = [];
-        for (i = 0; i < products.length; i++) {
-          const {
-            rows: [product],
-          } = await client.query(`
-              SELECT * FROM products
-              WHERE id = ${products[i]}
-            `);
-          productArr.push(product);
-        }
-  
-        return { id: rows[0].id, products: productArr, status: rows[0].status };
-      } else {
-        return [];
-      }
-    } catch (error) {
-        console.error("Error: Problem getting Completed Cart...", error)
-    }
-  }
-
-async function getCompletedCart({ userId }) {
-    let i = 0;
-    try {
-      const { rows } = await client.query(
-        `
-        SELECT * FROM cart
-        WHERE id = $1 AND status = 'completed'
-      `,
-        [userId]
-      );
-      if (rows.length > 0) {
-        const products = rows[0].productId;
-        const productArr = [];
-        for ( i = 0; i < products.length; i++) {
-          const {
-            rows: [product],
-          } = await client.query(`
-              SELECT * FROM products
-              WHERE id = ${products[i]}
-            `);
-          productArr.push(product);
-        }
-  
-        return { id: rows[0].id, products: productArr, status: rows[0].status };
-      } else {
-        return [];
-      }
-    } catch (error) {
-        console.error("Error: Problem getting Completed Cart...", error)
-    }
-  }
-
-  async function addToCart({ userId, productId }) {
-    // get cart for user
-    let i = 0;
-    const cart = await getCart({ userId });
-    const cartId = cart.id;
-    const oldProducts = cart.products;
-  
-    const newProducts = [];
-    if (oldProducts.length > 0) {
-      for (i = 0; i < oldProducts.length; i++) {
-        newProducts.push(oldProducts[i].id);
-      }
-      newProducts.push(...productId);
+      const orderData = {
+        orderId: openOrder[0].id,
+        orderPrice: updateOrder[0].orderPrice,
+        productId: updateOrderDetails[0].productId,
+      };
+      return [orderData];
     } else {
-      newProducts.push(...productId);
-    }
-  
-    try {
-      const {
-        rows: [updatedCart],
-      } = await client.query(
+      const newQuantity = checkProduct[0].quantity + Number(quantity);
+      const { rows: updateProductQuantity } = await client.query(
         `
-        UPDATE cart
-        SET "productId" = $1, status = $2
-        WHERE "id" = $3
-        RETURNING *;
+        UPDATE order_details
+        SET quantity = $1
+        WHERE "orderId" = $2
+        AND "productId" = $3
+        RETURNING "productId", "productPrice", quantity;
       `,
-        [newProducts, "processing", cartId]
+        [newQuantity, openOrder[0].id, productId]
       );
-  
-      return updatedCart;
-    } catch (error) {
-        console.error("Error: Problem adding to Cart...", error)
+      const orderData = {
+        orderId: openOrder[0].id,
+        orderPrice: updateOrder[0].orderPrice,
+        productId: updateProductQuantity[0].productId,
+      };
+      return [orderData];
     }
   }
+};
 
-  async function removeFromCart({ userId, productId }) {
-    let i = 0;
-    const cart = await getCart({ userId });
-    const oldProducts = cart.products;
-    const idArr = [];
-    try {
-      if (oldProducts.length > 0) {
-        const index = oldProducts.findIndex(
-          (product) => product.id === productId
-        );
-  
-        if (index !== -1) {
-          oldProducts.splice(index, 1);
-        }
-  
-        for (i = 0; i < oldProducts.length; i++) {
-          idArr.push(oldProducts[i].id);
-        }
-  
-        const {
-          rows: [updatedCart],
-        } = await client.query(
-          `
-          UPDATE cart 
-          SET "productId" = $1, status = $2 
-          WHERE "userId" = ${userId} 
-          RETURNING *;
-          `,
-          [idArr, "processing"]
-        );
-  
-        return updatedCart;
-      }
-    } catch (error) {
-        console.error("Error: Problem removing from Cart...", error)
+const deleteProductFromCart = async (orderId, productId, productPrice, quantity) => {
+  try {
+    const { rows: deleted } = await client.query(
+      `
+      DELETE FROM order_details
+      WHERE "orderId" = $1
+      AND "productId" = $2
+      RETURNING "productId";
+      `,
+      [orderId, productId]
+    );
+    const { rows: order } = await client.query(
+      `
+      SELECT "orderPrice" FROM user_orders
+      WHERE id = $1;
+      `,
+      [orderId]
+    );
+    const updatedOrderPrice =
+      Number(order[0].orderPrice) - Number(productPrice) * Number(quantity);
+    if (updatedOrderPrice > 0.01) {
+      await client.query(
+        `
+        UPDATE user_orders
+        SET "orderPrice" = $1
+        WHERE id = $2;
+      `,
+        [updatedOrderPrice, orderId]
+      );
+    } else {
+      await client.query(
+        `
+        DELETE FROM user_orders
+        WHERE id = $1;
+      `,
+        [orderId]
+      );
     }
+    return deleted;
+  } catch (error) {
+    console.error("Error: Trouble deleting product from cart.", error)
   }
+};
 
-  async function checkout({ userId, cartId }) {
-    try {
-      const {
-        rows: [updatedCart],
-      } = await client.query(
-        `
-        UPDATE cart
-        SET status = $1
-        WHERE "userId" = $2
+const editCartQuantity = async (
+  orderId,
+  productId,
+  productPrice,
+  prevQuantity,
+  newQuantity
+) => {
+  try {
+    const { rows: updated } = await client.query(
+      `
+      UPDATE order_details
+      SET quantity = $1
+      WHERE "orderId" = $2
+      AND "productId" = $3
+      RETURNING "orderId";
       `,
-        ["completed", userId]
-      );
-      const {
-        rows: [order],
-      } = await client.query(
-        `
-        INSERT INTO orders("userId", "cartId")
-        VALUES ($1, $2)
-        RETURNING *
+      [newQuantity, orderId, productId]
+    );
+    const { rows: order } = await client.query(
+      `
+      SELECT "orderPrice" FROM user_orders
+      WHERE id = $1
       `,
-        [userId, cartId]
-      );
-  
-      return updatedCart, order;
-    } catch (error) {
-        console.error("Error: Problem with checkout...", error)
-    }
+      [orderId]
+    );
+    const updatedOrderPrice =
+    Number(order[0].orderPrice) -
+    Number(prevQuantity) * Number(productPrice) +
+    Number(newQuantity) * Number(productPrice);
+    await client.query(
+      `
+      UPDATE user_orders
+      SET "orderPrice" = $1
+      WHERE id = $2;
+      `,
+      [updatedOrderPrice, orderId]
+    );
+    return updated
+  } catch (error) {
+    console.error("Error: There was trouble deleting this product.", error)
   }
+};
 
 module.exports = {
-    createCart,
-    getCompletedCart,
-    getCart,
     addToCart,
-    removeFromCart,
-    checkout
+    deleteProductFromCart,
+    editCartQuantity
 };

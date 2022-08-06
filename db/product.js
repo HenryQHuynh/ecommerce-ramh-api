@@ -1,6 +1,58 @@
-const client = require("./client");
+const client = require("../client");
 
 // DATABASE FUNCTIONS
+const createProduct = async ({
+    title,
+    author,
+    publisher,
+    imageLink,
+    genre,
+    description,
+    rating,
+    price,
+    inventory,
+    isActive = true,
+}) => {
+    try {
+        const { rows } = await client.query(
+            `
+            INSERT INTO products(title, author, publisher, "imageLink", genre, description, rating, price, inventory, "isActive")
+            VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)
+            RETURNING *;
+            `,
+            [
+            title,
+            author,
+            publisher,
+            imageLink,
+            genre,
+            description,
+            rating,
+            price,
+            inventory,
+            isActive,
+            ]
+        );
+        return rows;
+    } catch (error) {
+        console.error("Error: Problem creating product...", error)
+    }
+};
+
+const getProductById = async (id) => {
+    try {
+        const { rows } = await client.query(`
+        SELECT * FROM products
+        WHERE id = $1;
+        `,
+        [id]
+        );
+        return rows;
+    } catch (error) {
+    console.error("Error: Problem getting products by Id...", error)
+    }
+};
+
 async function getAllProducts() {
     try {
         const { rows } = await client.query(
@@ -10,135 +62,105 @@ async function getAllProducts() {
         );
         return rows;
     } catch (error) {
-        console.log("Error: Problem retrieving all products...", error);
+        console.error("Error: Problem retrieving all products...", error);
     }
 }
 
-async function getProductById(id) {
+const getProductByName = async (title) => {
     try {
-        const {
-            rows: [product],
-        } = await client.query(`
-      SELECT * FROM products
-      WHERE id = $1;
-      `, [id]);
-        console.log(product)
-        return product;
-    } catch (error) {
-        console.error("Error: Problem getting products by Id...", error);
-    }
-}
-
-async function getProductByName(title) {
-    try {
-        const {
-            rows: [product],
-        } = await client.query(
-            `
+        const { rows } = await client.query(
+        `
         SELECT * FROM products
         WHERE title = $1;
-        `, [title]);
-        return product;
-    } catch (error) {
-        console.error("Error: Problem getting product title...", error);
-    }
-}
-
-async function createProduct({
-    name,
-    description,
-    photoUrl,
-    authorId,
-    distId,
-    department,
-    price,
-    inStock,
-    quantity,
-    count,
-}) {
-    try {
-        const {
-            rows: [product],
-        } = await client.query(
-            `
-        INSERT INTO products(name, description, "photoUrl", authorId, distId, quantity, price, department, "inStock",  count)
-        VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
-        RETURNING *;
-      `,
-            [name, description, photoUrl, authorId, distId, quantity, price, department, inStock, count]
+        `,
+        [title]
         );
-
-        return product;
+        return rows;
     } catch (error) {
-        console.error("Error: Problem creating product...")
+    console.error("Error: Problem getting product title...", error);
     }
 }
 
-async function updateProduct({ id, description, authorId, distId }) {
-    const fields = { description, authorId, distId };
-
-    const setString = Object.keys(fields)
-        .map((key, index) => `"${key}"=$${index + 1}`)
-        .join(", ");
-
-    if (setString.length === 0) {
-        return;
-    }
+const getProductByGenre = async (genre) => {
     try {
-        const {
-            rows: [product],
-        } = await client.query(
-            `
-            UPDATE products
-            SET ${setString}
-            WHERE id=${id}
-            RETURNING *;
-            `,
-            Object.values(fields)
+        const { rows } = await client.query(
+        `
+        SELECT * FROM products
+        WHERE genre = $1;
+        `,
+        [genre]
         );
-        return product;
+        return rows;
     } catch (error) {
-        console.error("Problem updating products!", error);
+    console.error("Error: Problem getting products by genres...", error);
     }
 }
 
-async function addCount(id) {
-    const product = await getProductById(id);
-  
-    try {
-      const { rows } = await client.query(
-        `
-      UPDATE products
-      SET count = $1
-      WHERE id = $2
-      RETURNING *
-      `,
-        [product.count + 1, id]
-      );
-      return rows;
-    } catch (error) {
-        console.error("Problem updating products!", error);
-    }
-  }
+// async function updateProduct({ id, description, authorId, distId }) {
+//     const fields = { description, authorId, distId };
 
-  async function subtractCount(id) {
-    const product = await getProductById(id);
+//     const setString = Object.keys(fields)
+//         .map((key, index) => `"${key}"=$${index + 1}`)
+//         .join(", ");
+
+//     if (setString.length === 0) {
+//         return;
+//     }
+//     try {
+//         const {
+//             rows: [product],
+//         } = await client.query(
+//             `
+//             UPDATE products
+//             SET ${setString}
+//             WHERE id=${id}
+//             RETURNING *;
+//             `,
+//             Object.values(fields)
+//         );
+//         return product;
+//     } catch (error) {
+//         console.error("Problem updating products!", error);
+//     }
+// }
+
+// async function addCount(id) {
+//     const product = await getProductById(id);
   
-    try {
-      const { rows } = await client.query(
-        `
-      UPDATE products
-      SET count = $1
-      WHERE id = $2
-      RETURNING *
-      `,
-        [product.count - 1, id]
-      );
-      return rows;
-    } catch (error) {
-        console.error("Problem updating products!", error);
-    }
-  }
+//     try {
+//       const { rows } = await client.query(
+//         `
+//       UPDATE products
+//       SET count = $1
+//       WHERE id = $2
+//       RETURNING *
+//       `,
+//         [product.count + 1, id]
+//       );
+//       return rows;
+//     } catch (error) {
+//         console.error("Problem updating products!", error);
+//     }
+//   }
+
+// async function subtractCount(id) {
+//     const product = await getProductById(id);
+
+//     try {
+//         const { rows } = await client.query(
+//         `
+//         UPDATE products
+//         SET count = $1
+//         WHERE id = $2
+//         RETURNING *
+//         `,
+//         [product.count - 1, id]
+//         );
+//         return rows;
+//     } catch (error) {
+//         console.error("Problem updating products!", error);
+//     }
+//     }
 
 const destroyProduct = async (id) => {
     await client.query(`
@@ -165,8 +187,9 @@ module.exports = {
     getAllProducts,
     getProductById,
     getProductByName,
-    updateProduct,
+    getProductByGenre,
+    // updateProduct,
     destroyProduct,
-    addCount,
-    subtractCount
+    // addCount,
+    // subtractCount
 };

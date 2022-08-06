@@ -1,119 +1,57 @@
-const client = require("./client");
-const getCompletedCart = require('./cart.js');
+const client = require('../client');
 
-// reference routine_activities in fitness tracker
-// DATABASE FUNCTIONS
-async function createOrder({ name, productId, userId }) {
-    try {
-        const {
-            rows: [order],
-        } = await client.query(
-        `
-        INSERT INTO orders()
-        VALUES ($1, $2, $3)
-        ON CONFLICT (name, userId) DO NOTHING
-        RETURNING *; 
-        `,
-        [ name, productId, userId ]
-        );
-        return order;
-    } catch (error) {
-        console.error("Error: Problem creating an order list!...", error)
-    }
-}
-
-// ADMIN only
-async function getOrders() {
-    try {
-      const { rows } = await client.query(`
-        SELECT * FROM orders
-      `);
-  
-      const cartArr = [];
-      for (let i = 0; i < rows.length; i++) {
-        const cart = await getCompletedCart({ userId: rows[i].cartId });
-  
-        const totalArr = [];
-  
-        if (cart !== []) {
-          cart.products.map((product) => {
-            totalArr.push(parseFloat(product.price * product.count));
-          });
-  
-          const total = totalArr.reduce((a, b) => a + b, 0).toFixed(2);
-  
-          cartArr.push({ rows: rows[i], cart, total });
-        }
-      }
-  
-      return { cartArr };
-    } catch (error) {
-        console.error("Error: Problem creating an order list!...", error)
-    }
-  }
-
-  // list of orders for users
-async function getOrder(userId) {
-    try {
-      const { rows } = await client.query(
-        `
-        SELECT * FROM orders
-        WHERE "userId" = $1
-      `,
-        [userId]
-      );
-  
-      const cartArr = [];
-      for (let i = 0; i < rows.length; i++) {
-        const cart = await getCompletedCart({ userId: rows[i].cartId });
-  
-        const totalArr = [];
-  
-        if (cart !== []) {
-          cart.products.map((product) => {
-            totalArr.push(parseFloat(product.price * product.count));
-          });
-          const total = totalArr.reduce((a, b) => a + b, 0).toFixed(2);
-  
-          cartArr.push({ rows: rows[i], cart, total });
-        }
-      }
-  
-      return { cartArr };
-    } catch (error) {
-        console.error("Error: Problem creating an order list!...", error)
-    }
-  }
-
-  async function deleteOrdersAndCart(userId) {
-    try {
-      await client.query(
-        `
-      DELETE FROM orders
-      WHERE "userId"=$1;
-      `,
-        [userId]
-      );
-  
-      const { rows } = await client.query(
-        `
-      DELETE FROM cart
-      WHERE "userId"=$1
+const createOrderDetails = async ({ orderId, productId, productPrice, quantity }) => {
+  try {
+    const { rows } = await client.query(
+      `
+      INSERT INTO order_details("orderId", "productId", "productPrice", quantity)
+      VALUES ($1, $2, $3, $4)
       RETURNING *;
       `,
-        [userId]
-      );
-  
-      return rows;
-    } catch (error) {
-        console.error("Error: Problem creating an order list!...", error)
-    }
+      [orderId, productId, productPrice, quantity]
+    );
+    return rows;
+  } catch (error) {
+    console.error("Error: Problem creating order details!", error)
   }
-  
+};
+
+const createUserOrder = async ({ userId, orderComplete, orderPrice }) => {
+  try {
+    const { rows } = await client.query(
+      `
+      INSERT INTO user_orders("userId", "orderComplete", "orderPrice")
+      VALUES ($1, $2, $3)
+      RETURNING *;
+      `,
+      [userId, orderComplete, orderPrice]
+    );
+    return rows;
+  } catch (error) {
+    console.error("Error: Problem creating user order!", error)
+  }
+};
+
+const submitOrder = async ({ orderId, userId }) => {
+  try {
+    const { rows } = await client.query(
+      `
+      UPDATE user_orders
+      SET "orderComplete" = true
+      WHERE id = $1
+      AND "userId" = $2
+      RETURNING id, "orderComplete"
+      `,
+      [orderId, userId]
+    );
+    return rows;
+  } catch (error) {
+    console.error("Error: Problem submitting user order!", error)  
+  }
+};
 
 module.exports = {
-    createOrder,
-    getOrders,
-    getOrder,
-    deleteOrdersAndCart,
+  createOrderDetails,
+  createUserOrder,
+  submitOrder,
 };
