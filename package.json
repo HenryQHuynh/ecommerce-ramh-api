@@ -3,6 +3,7 @@
   "engines": {
     "node": "16.14.0"
   },
+  "authors":"Ryan Peters, Aandrea Barrios, Max Moir, Henry Huynh",
   "version": "0.1.0",
   "private": true,
   "scripts": {
