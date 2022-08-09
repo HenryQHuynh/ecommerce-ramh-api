@@ -212,11 +212,11 @@ const productsData = [
         price:14.99
     },
     {
-        title: "Hello Dave",
-        publisher: "I'm Sorry",
-        imageLink: "I can't",
-        description: "do that",
-        price: 42.00,
+        title:"Hello Dave this is a test",
+        publisher:"DC Comics",
+        imageLink:"https://static01.nyt.com/images/2018/05/15/arts/01hal-voice1/merlin_135847308_098289a6-90ee-461b-88e2-20920469f96a-articleLarge.jpg?quality=75&auto=webp&disable=upscale",
+        description:`Space Oddities or Space Odyssey >->`,
+        price: 41.99
     },
     // {
     //     title:,
