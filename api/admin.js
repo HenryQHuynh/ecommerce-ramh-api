@@ -12,23 +12,23 @@ const {
 } = require("../db");
 
 // USERS
-// GET /api/admin/users/
+// GET /api/admin/users/all-users
 router.get("/users/all-users", async (req, res, next) => {
-    // const { isAdmin } = req.user;
-    // if (!isAdmin) {
-    //     res.status(403);
-    //     next({
-    //         name: "Permission Denied",
-    //         message: "You do not have the right permissions",
-    //     });
-    // } else {
+    const { isAdmin } = req.user;
+    if (!isAdmin) {
+        res.status(403);
+        next({
+            name: "Permission Denied",
+            message: "You do not have the right permissions",
+        });
+    } else {
         try {
             const result = await getAllUsers();
             res.send(result);
         } catch (error) {
         next(error);
         }
-    // }
+    }
 });
 
 // PATCH /api/admin/users/remove
@@ -61,7 +61,7 @@ router.patch("/user/remove", async (req, res, next) => {
   }
 });
 
-//PATCH /api/admin/users/promote
+//PATCH /api/admin/user/administrator
 router.patch("/user/administrator", async (req, res, next) => {
     const { userId } = req.body;
     const { isAdmin } = req.user;
