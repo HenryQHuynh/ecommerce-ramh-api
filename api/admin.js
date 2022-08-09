@@ -14,21 +14,21 @@ const {
 // USERS
 // GET /api/admin/users/
 router.get("/users/all-users", async (req, res, next) => {
-    const { isAdmin } = req.user;
-    if (!isAdmin) {
-        res.status(403);
-        next({
-            name: "Permission Denied",
-            message: "You do not have the right permissions",
-        });
-    } else {
+    // const { isAdmin } = req.user;
+    // if (!isAdmin) {
+    //     res.status(403);
+    //     next({
+    //         name: "Permission Denied",
+    //         message: "You do not have the right permissions",
+    //     });
+    // } else {
         try {
             const result = await getAllUsers();
             res.send(result);
         } catch (error) {
         next(error);
         }
-    }
+    // }
 });
 
 // PATCH /api/admin/users/remove
@@ -216,20 +216,20 @@ router.delete("/products/:productId", async (req, res, next) => {
 // PRODUCT ORDERS
 // GET /api/admin/orders/all
 router.get("/orders/all", async (req, res, next) => {
-    const { isAdmin } = req.user;
-    if (!isAdmin) {
-      res.status(403);
-      next({
-        name: "Permission Denied",
-        message: "You do not have the right permissions",
-      });
-    } else {
+    // const { isAdmin } = req.user;
+    // if (!isAdmin) {
+    //   res.status(403);
+    //   next({
+    //     name: "Permission Denied",
+    //     message: "You do not have the right permissions",
+    //   });
+    // } else {
       try {
         const result = await getAllOrders();
         res.send(result);
       } catch (error) {
         next(error);
-      }
+      // }
     }
   });
 
