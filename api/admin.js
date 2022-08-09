@@ -14,20 +14,20 @@ const {
 // USERS
 // GET /api/admin/users/all-users
 router.get("/users/all-users", async (req, res, next) => {
-    const { isAdmin } = req.user;
-    if (!isAdmin) {
-        res.status(403);
-        next({
-            name: "Permission Denied",
-            message: "You do not have the right permissions",
-        });
-    } else {
+    // const { isAdmin } = req.user;
+    // if (!isAdmin) {
+    //     res.status(403);
+    //     next({
+    //         name: "Permission Denied",
+    //         message: "You do not have the right permissions",
+    //     });
+    // } else {
         try {
             const result = await getAllUsers();
             res.send(result);
         } catch (error) {
         next(error);
-        }
+        // }
     }
 });
 
