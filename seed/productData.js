@@ -211,13 +211,13 @@ const productsData = [
         This action-packed adult coloring book is filled with ready-to-color illustrations of one of DC Comics" most iconic characters. From the bright red and blue of Wonder Woman’s costume to the rich greens and yellows of her homeland, Themyscira, the heraldry of this Amazonian Super Hero is yours to design and color. Featuring many of the greatest artists in DC Comics history and their interpretations of Wonder Woman’s memorable adventures, this incredible coloring book offers hours of creative fun and relaxation.`,
         price:14.99
     },
-    // {
-    //     title:,
-    //     publisher:,
-    //     imageLink:,
-    //     description:,
-    //     price:,
-    // },
+    {
+        title: "Hello Dave",
+        publisher: "I'm Sorry",
+        imageLink: "I can't",
+        description: "do that",
+        price: 42.00,
+    },
     // {
     //     title:,
     //     publisher:,
