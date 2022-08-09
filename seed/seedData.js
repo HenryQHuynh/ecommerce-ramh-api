@@ -1,4 +1,3 @@
-const faker = require('faker');
 const {
   createProduct,
   createUser,
@@ -45,17 +44,13 @@ async function createInitialProducts() {
       ];
       return genres[Math.floor(Math.random() * 8)];
     };
-    const assignPrice = () =>
-      Number((Math.floor(Math.random() * 12) + 8.99).toFixed(2));
     const publicRating = () => Number((2 + Math.random() * 3).toFixed(1));  
     const assignInventory = () => Math.floor(Math.random() * 91) + 10;
     const addKeysToProductsData = productsData.map((product) => {
       return {
         ...product,
         genre: assignGenre(),
-        description: faker.lorem.paragraph(5),
         rating: publicRating(),
-        price: assignPrice(),
         inventory: assignInventory(),
       };
     });
