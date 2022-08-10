@@ -73,7 +73,7 @@ const getUserProfileById = async(userId) => {
   try {
     const { rows: user } = await client.query(
       `
-      SELECT id, "userEmail' FROM users
+      SELECT id, "userEmail" FROM users
       WHERE id = $1;
       `,
       [userId]
