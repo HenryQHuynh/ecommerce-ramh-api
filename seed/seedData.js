@@ -78,15 +78,15 @@ async function createInitialOrders() {
           Number(product2.price)
       },
       {
-        userId: 1,
+        userId: 2,
         orderComplete: true,
         orderPrice:
           Number(product3.price) * 2 +
           Number(product4.price)
       },
       {
-        userId: 1,
-        orderComplete: true,
+        userId: 4,
+        orderComplete: false,
         orderPrice:
           Number(product5.price) * 4 +
           Number(product6.price)

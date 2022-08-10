@@ -6,7 +6,28 @@ const {
   deleteProductFromCart,
   editCartQuantity,
   submitOrder,
+  getUserCartById,
 } = require("../db");
+
+
+// GET /api/orders/me/cart
+router.get("/me/cart", async (req, res, next) => {
+  if (!req.user) {
+    res.status(401);
+    next({
+      name: "Error: Check authorization with cart",
+      message: "You must be logged in to perform this action.",
+    });
+  } else {
+    const { id: userId } = req.user;
+    try {
+      const result = await getUserCartById(userId);
+      res.send(result);
+    } catch (err) {
+      next(err);
+    }
+  }
+});
 
 // POST /api/orders/cart
 router.post("/cart", async (req, res, next) => {
