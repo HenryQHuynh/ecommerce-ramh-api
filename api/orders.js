@@ -34,7 +34,7 @@ router.post("/cart", async (req, res, next) => {
   const { userId, productPrice, productId, quantity } = req.body;
   try {
     const result = await addToCart(userId, productPrice, productId, quantity);
-    if (result.length) {
+    if (result) {
       res.send({
         name: "Update to cart",
         message: "Item added to cart.",
@@ -62,7 +62,7 @@ router.patch("/cart", async (req, res, next) => {
       oldQuan,
       newQuan
     );
-    if (result.length) {
+    if (result) {
       res.send({
         name: "Update to cart",
         message: "Changed number of items in your cart.",
@@ -89,7 +89,7 @@ router.delete("/cart", async (req, res, next) => {
       productPrice,
       quantity
     );
-    if (result.length) {
+    if (result) {
       res.send({
         name: "Update to cart",
         message: "Successfully deleted item from your cart",

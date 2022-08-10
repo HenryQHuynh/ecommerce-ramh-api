@@ -166,7 +166,7 @@ router.patch("/products/:productId", async (req, res, next) => {
             };
             console.log("data:", data);
             const result = await editProduct(data);
-            if (result.length) {
+            if (result) {
                 res.send({
                     name: "Update successful",
                     message: `Product Id# ${productId} has been updated!`,
@@ -197,7 +197,7 @@ router.delete("/products/:productId", async (req, res, next) => {
         const { productId } = req.params;
         try {
         const result = await removeProduct(productId);
-        if (result.length) {
+        if (result) {
             res.send({
             name: "Deactivation Successful",
             message: `Product Id# ${productId} has been deactivated.`,
