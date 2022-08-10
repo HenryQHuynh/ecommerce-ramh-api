@@ -73,7 +73,7 @@ const getUserProfileById = async(userId) => {
   try {
     const { rows: user } = await client.query(
       `
-      SELECT id, "userEmail" FROM users
+      SELECT id, "userEmail", "isAdmin" FROM users
       WHERE id = $1;
       `,
       [userId]
@@ -85,6 +85,7 @@ const getUserProfileById = async(userId) => {
       `,
       [userId]
     );
+
     let arr = [];
     for (const order of userOrders) {
       const { rows: userOrder } = await client.query(
