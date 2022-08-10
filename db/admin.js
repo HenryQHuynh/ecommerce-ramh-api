@@ -19,7 +19,7 @@ const removeUser = async (userId) => {
         const { rows: check } = await client.query(
             `
             SELECT "isAdmin" FROM users
-            WHER id = $1;
+            WHERE id = $1;
             `,
             [userId]
         );
@@ -28,7 +28,7 @@ const removeUser = async (userId) => {
         } else {
             const { rows } = await client.query(
                 `
-                UPDATE users SET "isActive" = false
+                UPDATE users SET "isAdmin" = false
                 WHERE id = $1
                 RETURNING id;
                 `,

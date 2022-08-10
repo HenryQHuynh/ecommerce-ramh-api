@@ -63,7 +63,7 @@ async function getUserById(userId) {
       `,
       [userId]
     );
-    return rows;
+    return rows[0];
   } catch (error) {
     console.error("Error: Problem getting user by Id...", error);
   }

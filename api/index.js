@@ -37,6 +37,7 @@ router.use(async (req, res, next) => {
       if (userId) {
         // set req.user with user object
         req.user = await getUserById(userId);
+        console.log(req.user)
         next();
       }
     } catch ({ name, message }) {
