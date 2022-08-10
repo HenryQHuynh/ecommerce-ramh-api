@@ -44,7 +44,7 @@ router.patch("/user/remove", async (req, res, next) => {
         const { userId } = req.body;
         try {
         const result = await removeUser(userId);
-        if (!result.length) {
+        if (!result) {
         res.status(400);
         next({
             name: "Action Forbidden",
@@ -74,7 +74,7 @@ router.patch("/user/administrator", async (req, res, next) => {
     } else {
       try {
         const result = await Administrator(userId);
-        if (!result.length) {
+        if (!result) {
           res.status(400);
           next({
             name: "Permission Denied",
