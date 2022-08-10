@@ -30,7 +30,7 @@ router.post("/register", async (req, res, next) => {
     } else {
       const newUser = createUser({ userEmail, password });
       const token = jwt.sign(
-        { id: newUser.id, email: newUser.email },
+        { id: newUser.id, email: newUser.email, isAdmin: newUser.isAdmin },
         JWT_SECRET
       );
       res.send({
