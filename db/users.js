@@ -134,7 +134,12 @@ const getUserCartById = async (userId) => {
     if (order.length) {
       const { rows: details } = await client.query(
         `
-        SELECT order_details."productId", order_details."productPrice", order_details.quantity, products.title, products."imageLink"
+        SELECT 
+          order_details."productId",
+          order_details."productPrice",
+          order_details.quantity,
+          products.title,
+          products."imageLink"
         FROM order_details JOIN products
         ON order_details."productId" = products.id
         WHERE "orderId" = $1;
