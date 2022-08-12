@@ -7,12 +7,16 @@ This project was bootstrapped with [Create React App](https://github.com/faceboo
 In the project directory, you can run:
 
 ### `npm run start`
+Start server.js
 
 ### `npm run start:dev`
+Start server.js with nodemon
 
 ### `npm run seed`
+Start ./seed/index.js
 
 ### `npm run seed:dev`
+Start ./seed/index.js with nodemon
 
 ### `npm start`
 
