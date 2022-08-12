@@ -3,7 +3,7 @@
   "engines": {
     "node": "16.14.0"
   },
-  "authors":"Ryan Peters, Aandrea Barrios, Max Moir, Henry Huynh",
+  "authors": "Ryan Peters, Aandrea Barrios, Max Moir, Henry Huynh",
   "version": "0.1.0",
   "private": true,
   "scripts": {
@@ -24,6 +24,7 @@
     "morgan": "^1.10.0",
     "nodemon": "^2.0.19",
     "pg": "^8.7.3",
+    "stripe": "^10.2.0",
     "web-vitals": "^2.1.4"
   },
   "eslintConfig": {

@@ -7,14 +7,14 @@ const { getUserById } = require("../db");
 // middleware to create req.user
 // GET /api/health
 router.get("/health", async (req, res, next) => {
-  res.send({ message: "All is well, the server is good to go." });
+  res.send({ message: "All will be well, the server is good to go." });
   next();
 });
 
 // Blank /api/
 router.get("/", (req, res, next) => {
   res.send({
-    message: "API is under construction, please be patient!",
+    message: "I'm Sorry Dave, I'm Afraid I Can't Do That, the API is under construction, please be patient...",
   });
   next();
 });
